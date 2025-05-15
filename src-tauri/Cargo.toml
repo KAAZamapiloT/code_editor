@@ -1,0 +1,8 @@
+[package]
+name = "tauri_codemirror_editor"
+version = "1.0.0"
+edition = "2021"
+
+[dependencies]
+tauri = { version = "2.0.0", features = ["api-all"] }
+tauri-plugin-pty = "2.0.0" 

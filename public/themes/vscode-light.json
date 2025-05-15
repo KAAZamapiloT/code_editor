@@ -1,0 +1,8 @@
+{
+  "name": "VS Code Light",
+  "type": "light",
+  "colors": {
+    "editor.background": "#ffffff",
+    "editor.foreground": "#333333"
+  }
+} 

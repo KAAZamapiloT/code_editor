@@ -1,0 +1,8 @@
+{
+  "name": "VS Code Dark",
+  "type": "dark",
+  "colors": {
+    "editor.background": "#1e1e1e",
+    "editor.foreground": "#d4d4d4"
+  }
+} 
