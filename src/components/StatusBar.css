@@ -1,0 +1,143 @@
+.status-bar {
+  background-color: var(--status-bar-bg, #007acc);
+  color: var(--status-bar-text, #ffffff);
+  display: flex;
+  justify-content: flex-start;
+  padding: 4px 10px;
+  font-size: 12px;
+  border-top: 1px solid var(--border-color);
+  user-select: none;
+}
+
+.status-item {
+  margin-right: 15px;
+  display: flex;
+  align-items: center;
+}
+
+.status-item:last-child {
+  margin-right: 0;
+}
+
+.mode-indicator {
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-weight: bold;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.mode-indicator.normal {
+  background-color: #2196F3;
+  color: white;
+}
+
+.mode-indicator.insert {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.mode-indicator.visual {
+  background-color: #FF9800;
+  color: white;
+}
+
+.status-item.file-type {
+  font-weight: bold;
+}
+
+.status-item.time {
+  margin-left: auto;
+  letter-spacing: 1px;
+}
+
+.status-item.memory {
+  font-family: monospace;
+  opacity: 0.8;
+}
+
+.dirty-indicator {
+  color: #FF5252;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.offline-indicator {
+  background-color: #FF5252;
+  color: white;
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: bold;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+
+/* Adjustments for CRT/Glitch themes */
+.status-bar.crt-text,
+.status-bar.glitch-text {
+  font-family: 'VT323', 'Courier New', monospace;
+  font-size: 14px;
+}
+
+.crt-text .mode-indicator {
+  border: 1px solid currentColor;
+  background-color: transparent;
+}
+
+.glitch-text .mode-indicator {
+  border: 1px solid var(--glitch-green);
+  background-color: transparent;
+}
+
+.glitch-text .offline-indicator {
+  background-color: var(--glitch-red);
+  border: 1px solid var(--glitch-red);
+  color: var(--glitch-bg);
+}
+
+.crt-text .offline-indicator {
+  background-color: var(--crt-red);
+  border: 1px solid var(--crt-red);
+  color: var(--crt-bg);
+}
+
+/* CRT theme status bar */
+.crt-theme .status-bar {
+  background-color: #111111;
+  border-top: 2px solid var(--crt-green);
+  font-family: 'VT323', 'Courier New', monospace;
+}
+
+.crt-theme .mode-indicator {
+  background-color: transparent;
+  color: var(--crt-cyan);
+  border: 1px solid var(--crt-cyan);
+}
+
+.crt-theme .mode-indicator.normal {
+  color: var(--crt-green);
+  border-color: var(--crt-green);
+}
+
+.crt-theme .mode-indicator.insert {
+  color: var(--crt-cyan);
+  border-color: var(--crt-cyan);
+}
+
+.crt-theme .mode-indicator.visual {
+  color: var(--crt-pink);
+  border-color: var(--crt-pink);
+}
+
+.crt-theme .status-item.time {
+  color: var(--crt-yellow);
+}
+
+.crt-theme .status-item.file-type {
+  color: var(--crt-green);
+} 

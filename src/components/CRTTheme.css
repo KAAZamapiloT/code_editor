@@ -1,0 +1,225 @@
+/* CRT Monitor Theme for Code Editor */
+:root {
+  --crt-bg: #0a0a0a;
+  --crt-green: #33ff33;
+  --crt-blue: #3366ff;
+  --crt-amber: #ffb000;
+  --crt-pink: #ff55ff;
+  --crt-cyan: #00ffff;
+  --crt-red: #ff3333;
+  --crt-yellow: #ffff33;
+  --crt-white: #f0f0f0;
+  --crt-overlay: rgba(0, 0, 0, 0.1);
+  --crt-scan-line: rgba(0, 0, 0, 0.2);
+}
+
+.crt-theme {
+  --bg-color: var(--crt-bg);
+  --header-bg: #111111;
+  --header-text: var(--crt-green);
+  --border-color: #333333;
+  --button-bg: #333333;
+  --button-hover: #555555;
+  --status-bar-bg: #111111;
+  --status-bar-text: var(--crt-amber);
+}
+
+/* CRT Screen Effect */
+.crt-monitor {
+  position: relative;
+  background-color: var(--crt-bg);
+  overflow: hidden;
+  border-radius: 8px;
+  box-shadow: 0 0 30px rgba(10, 255, 10, 0.2), 
+              inset 0 0 10px rgba(0, 0, 0, 0.4);
+}
+
+/* Scan lines effect */
+.crt-monitor::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 50%,
+    var(--crt-scan-line) 50%
+  );
+  background-size: 100% 4px;
+  pointer-events: none;
+  z-index: 100;
+}
+
+/* CRT glow overlay */
+.crt-monitor::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 0%,
+    var(--crt-overlay) 90%
+  );
+  pointer-events: none;
+  z-index: 99;
+}
+
+/* CRT On/Off animation */
+@keyframes crtOn {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  5% {
+    opacity: 0.5;
+  }
+  10% {
+    opacity: 0.3;
+  }
+  15% {
+    opacity: 0.8;
+  }
+  30% {
+    opacity: 0.4;
+  }
+  40% {
+    opacity: 0.7;
+  }
+  70% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* CRT Text Effect */
+.crt-text {
+  text-shadow: 
+    0 0 2px currentColor,
+    0 0 4px rgba(255, 255, 255, 0.3);
+  animation: textFlicker 5s infinite;
+}
+
+@keyframes textFlicker {
+  0% { text-shadow: 0 0 2px currentColor, 0 0 4px rgba(255, 255, 255, 0.3); }
+  5% { text-shadow: 0 0 1px currentColor, 0 0 3px rgba(255, 255, 255, 0.2); }
+  10% { text-shadow: 0 0 2px currentColor, 0 0 6px rgba(255, 255, 255, 0.4); }
+  15% { text-shadow: 0 0 2px currentColor, 0 0 4px rgba(255, 255, 255, 0.3); }
+  80% { text-shadow: 0 0 2px currentColor, 0 0 4px rgba(255, 255, 255, 0.3); }
+  85% { text-shadow: 0 0 1px currentColor, 0 0 3px rgba(255, 255, 255, 0.2); }
+  95% { text-shadow: 0 0 2px currentColor, 0 0 6px rgba(255, 255, 255, 0.4); }
+  100% { text-shadow: 0 0 2px currentColor, 0 0 4px rgba(255, 255, 255, 0.3); }
+}
+
+/* Colorful syntax highlighting for CRT theme */
+.crt-theme .cm-keyword {
+  color: var(--crt-cyan) !important;
+  font-weight: bold;
+}
+
+.crt-theme .cm-operator {
+  color: var(--crt-yellow) !important;
+}
+
+.crt-theme .cm-string {
+  color: var(--crt-green) !important;
+}
+
+.crt-theme .cm-comment {
+  color: var(--crt-amber) !important;
+  font-style: italic;
+}
+
+.crt-theme .cm-number {
+  color: var(--crt-pink) !important;
+}
+
+.crt-theme .cm-property {
+  color: var(--crt-blue) !important;
+}
+
+.crt-theme .cm-variable {
+  color: var(--crt-white) !important;
+}
+
+.crt-theme .cm-variableName {
+  color: var(--crt-white) !important;
+}
+
+.crt-theme .cm-def {
+  color: var(--crt-red) !important;
+  font-weight: bold;
+}
+
+.crt-theme .cm-function {
+  color: var(--crt-yellow) !important;
+}
+
+.crt-theme .cm-atom {
+  color: var(--crt-pink) !important;
+}
+
+/* Editor chrome in CRT theme */
+.crt-theme .editor-header {
+  border-bottom: 2px solid var(--crt-green);
+  padding: 10px;
+  font-family: 'VT323', 'Courier New', monospace;
+}
+
+.crt-theme .theme-selector {
+  background-color: var(--crt-bg);
+  color: var(--crt-green);
+  border: 1px solid var(--crt-green);
+}
+
+.crt-theme .action-button {
+  background-color: var(--button-bg);
+  color: var(--crt-green);
+  border: 1px solid var(--crt-green);
+  font-family: 'VT323', 'Courier New', monospace;
+}
+
+.crt-theme .action-button:hover {
+  background-color: var(--button-hover);
+  color: var(--crt-cyan);
+  border-color: var(--crt-cyan);
+}
+
+/* CRT cursor */
+.crt-theme .cm-cursor {
+  border-left: 2px solid var(--crt-green) !important;
+  animation: blinkCursor 1s infinite step-end;
+}
+
+@keyframes blinkCursor {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Make editor look like a CRT screen */
+.crt-theme .editor-content {
+  animation: crtOn 2s ease-in-out;
+  font-family: 'VT323', 'Courier New', monospace;
+}
+
+/* Retro terminal-style scrollbar */
+.crt-theme .cm-scroller::-webkit-scrollbar {
+  width: 12px;
+}
+
+.crt-theme .cm-scroller::-webkit-scrollbar-track {
+  background: #111111;
+}
+
+.crt-theme .cm-scroller::-webkit-scrollbar-thumb {
+  background-color: var(--crt-green);
+  border-radius: 6px;
+  border: 2px solid #111111;
+} 

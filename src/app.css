@@ -8,6 +8,17 @@
   --button-primary: #0078d7;
   --button-hover: #005a9e;
   --border-color: #474747;
+  
+  /* CRT theme colors */
+  --crt-bg: #0a0a0a;
+  --crt-green: #33ff33;
+  --crt-blue: #3366ff;
+  --crt-amber: #ffb000;
+  --crt-pink: #ff55ff;
+  --crt-cyan: #00ffff;
+  --crt-red: #ff3333;
+  --crt-yellow: #ffff33;
+  --crt-white: #f0f0f0;
 }
 
 [data-theme="light"] {
@@ -21,10 +32,163 @@
   --border-color: #cccccc;
 }
 
+/* Font for CRT theme */
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+}
+
+body, html, #root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+    Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.app {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: #1e1e1e;
+  color: #cccccc;
+}
+
+/* CRT mode app styling */
+.crt-theme ~ .app {
+  background-color: var(--crt-bg);
+}
+
+.main-container {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.editor-page {
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
+
+.content-area {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* CRT mode toolbar */
+.crt-theme .toolbar {
+  background-color: #111111;
+  border-bottom: 1px solid var(--crt-green);
+}
+
+.crt-theme .toolbar button {
+  background-color: #222222;
+  color: var(--crt-green);
+  border: 1px solid var(--crt-green);
+}
+
+.crt-theme .toolbar button:hover {
+  background-color: #333333;
+  color: var(--crt-cyan);
+  border-color: var(--crt-cyan);
+}
+
+.toolbar {
+  display: flex;
+  padding: 8px;
+  background-color: #252526;
+  border-bottom: 1px solid #333;
+}
+
+.toolbar button {
+  background-color: #0e639c;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  padding: 6px 12px;
+  margin-right: 8px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.toolbar button:hover {
+  background-color: #1177bb;
+}
+
+.panel-container {
+  display: flex;
+  height: 100%;
+  position: relative;
+}
+
+/* CRT mode panel */
+.crt-theme .left-panel {
+  background-color: var(--crt-bg);
+  border-right: 1px solid var(--crt-green);
+}
+
+.crt-theme .panel-tabs {
+  background-color: #111111;
+  border-bottom: 1px solid var(--crt-green);
+}
+
+.crt-theme .panel-tab.active {
+  color: var(--crt-green);
+  border-bottom: 2px solid var(--crt-green);
+}
+
+.left-panel {
+  width: 250px;
+  border-right: 1px solid #333;
+  background-color: #252526;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-tabs {
+  display: flex;
+  height: 36px;
+  background-color: #2d2d2d;
+  border-bottom: 1px solid #333;
+}
+
+.panel-tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+  color: #8f8f8f;
+}
+
+.panel-tab.active {
+  color: #ffffff;
+  border-bottom: 2px solid #0e639c;
+}
+
+.panel-content {
+  flex: 1;
+  overflow: hidden;
+}
+
+.right-panel {
+  width: 0;
+  border-left: 1px solid #333;
+  transition: width 0.3s ease;
+  background-color: #252526;
+}
+
+.right-panel.expanded {
+  width: 300px;
 }
 
 body {
@@ -47,33 +211,6 @@ a:hover {
   display: flex;
   flex-direction: column;
   height: 100vh;
-}
-
-.toolbar {
-  display: flex;
-  padding: 10px;
-  background-color: #1e1e1e;
-  border-bottom: 1px solid #333;
-}
-
-.toolbar button {
-  margin-right: 10px;
-  padding: 8px 12px;
-  background-color: #2b2b2b;
-  color: #ffffff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.toolbar button:hover {
-  background-color: #3a3a3a;
-}
-
-.editor-container {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
 }
 
 .editor-header {

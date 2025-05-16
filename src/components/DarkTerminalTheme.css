@@ -1,0 +1,271 @@
+/* Dark Terminal Theme for Code Editor */
+:root {
+  --terminal-bg: #1a1a1a;
+  --terminal-fg: #f0f0f0;
+  --terminal-header: #252525;
+  --terminal-border: #333333;
+  --terminal-selection: rgba(75, 75, 75, 0.5);
+  --terminal-cursor: #f0f0f0;
+  --terminal-comment: #6a9955;
+  --terminal-orange: #ce9178;
+  --terminal-yellow: #dcdcaa;
+  --terminal-green: #6a9955;
+  --terminal-blue: #569cd6;
+  --terminal-purple: #c586c0;
+  --terminal-red: #f44747;
+  --terminal-white: #d4d4d4;
+}
+
+.terminal-theme {
+  --bg-color: var(--terminal-bg);
+  --header-bg: var(--terminal-header);
+  --header-text: var(--terminal-fg);
+  --border-color: var(--terminal-border);
+  --button-bg: #2a2a2a;
+  --button-hover: #3a3a3a;
+  --status-bar-bg: #252525;
+  --status-bar-text: var(--terminal-fg);
+}
+
+/* Terminal styling */
+.terminal-theme .editor-container {
+  background-color: var(--terminal-bg);
+  color: var(--terminal-fg);
+  font-family: 'Consolas', 'Courier New', monospace;
+}
+
+.terminal-theme .editor-header {
+  background-color: var(--terminal-header);
+  border-bottom: 1px solid var(--terminal-border);
+  color: var(--terminal-fg);
+  padding: 10px;
+}
+
+.terminal-theme .theme-selector {
+  background-color: var(--terminal-bg);
+  color: var(--terminal-fg);
+  border: 1px solid var(--terminal-border);
+  border-radius: 3px;
+  padding: 5px;
+}
+
+.terminal-theme .action-button {
+  background-color: var(--button-bg);
+  color: var(--terminal-fg);
+  border: 1px solid var(--terminal-border);
+  border-radius: 3px;
+  padding: 3px 8px;
+}
+
+.terminal-theme .action-button:hover {
+  background-color: var(--button-hover);
+}
+
+/* Cursor styling */
+.terminal-theme .cm-cursor {
+  border-left: 1.5px solid var(--terminal-cursor);
+}
+
+@keyframes blinkCursor {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+.terminal-theme .cm-cursor {
+  animation: blinkCursor 1s infinite step-end;
+}
+
+/* Editor content */
+.terminal-theme .editor-content {
+  padding: 5px;
+}
+
+/* Scrollbar styling */
+.terminal-theme .cm-scroller::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.terminal-theme .cm-scroller::-webkit-scrollbar-track {
+  background: var(--terminal-bg);
+}
+
+.terminal-theme .cm-scroller::-webkit-scrollbar-thumb {
+  background: var(--terminal-border);
+  border-radius: 3px;
+}
+
+.terminal-theme .cm-scroller::-webkit-scrollbar-thumb:hover {
+  background: #4a4a4a;
+}
+
+/* Status bar */
+.terminal-theme .status-bar {
+  background-color: var(--status-bar-bg);
+  color: var(--status-bar-text);
+  border-top: 1px solid var(--terminal-border);
+  padding: 5px 10px;
+}
+
+.terminal-theme .mode-indicator {
+  padding: 2px 5px;
+  border-radius: 3px;
+  margin-right: 10px;
+}
+
+.terminal-theme .mode-indicator.normal {
+  background-color: #2d2d2d;
+  color: var(--terminal-blue);
+}
+
+.terminal-theme .mode-indicator.insert {
+  background-color: #2d2d2d;
+  color: var(--terminal-green);
+}
+
+.terminal-theme .mode-indicator.visual {
+  background-color: #2d2d2d;
+  color: var(--terminal-purple);
+}
+
+/* Terminal integration */
+.terminal-theme .terminal-header {
+  background-color: var(--terminal-header);
+  color: var(--terminal-fg);
+  border-bottom: 1px solid var(--terminal-border);
+  padding: 5px 10px;
+}
+
+.terminal-theme .terminal-close {
+  background: none;
+  border: none;
+  color: var(--terminal-fg);
+  cursor: pointer;
+}
+
+.terminal-theme .terminal-close:hover {
+  color: var(--terminal-red);
+}
+
+.terminal-theme .terminal-container {
+  background-color: var(--terminal-bg);
+  border-top: 1px solid var(--terminal-border);
+}
+
+/* Notifications */
+.terminal-theme .notification {
+  background-color: var(--terminal-header);
+  color: var(--terminal-fg);
+  border-left: 3px solid var(--terminal-blue);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  padding: 10px;
+  margin-bottom: 5px;
+}
+
+/* Command palette */
+.terminal-theme .command-palette {
+  background-color: var(--terminal-bg);
+  border: 1px solid var(--terminal-border);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.terminal-theme .command-palette-header input {
+  background-color: var(--terminal-header);
+  color: var(--terminal-fg);
+  border: 1px solid var(--terminal-border);
+  padding: 8px;
+}
+
+.terminal-theme .command-item {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--terminal-border);
+}
+
+.terminal-theme .command-item:hover {
+  background-color: var(--terminal-header);
+}
+
+/* File explorer */
+.terminal-theme .file-explorer {
+  background-color: var(--terminal-bg);
+  border-right: 1px solid var(--terminal-border);
+}
+
+.terminal-theme .file-explorer-header {
+  background-color: var(--terminal-header);
+  color: var(--terminal-fg);
+  padding: 5px 10px;
+  border-bottom: 1px solid var(--terminal-border);
+}
+
+.terminal-theme .file-item {
+  color: var(--terminal-fg);
+  padding: 4px 8px;
+}
+
+.terminal-theme .file-item:hover {
+  background-color: var(--button-hover);
+}
+
+.terminal-theme .file-item.selected {
+  background-color: var(--terminal-selection);
+}
+
+/* Syntax highlighting for Dark Terminal theme */
+.terminal-theme .cm-keyword {
+  color: var(--terminal-blue) !important;
+  font-weight: bold;
+}
+
+.terminal-theme .cm-operator {
+  color: var(--terminal-white) !important;
+}
+
+.terminal-theme .cm-string {
+  color: var(--terminal-orange) !important;
+}
+
+.terminal-theme .cm-comment {
+  color: var(--terminal-comment) !important;
+  font-style: italic;
+}
+
+.terminal-theme .cm-number {
+  color: var(--terminal-green) !important;
+}
+
+.terminal-theme .cm-property {
+  color: var(--terminal-yellow) !important;
+}
+
+.terminal-theme .cm-variable {
+  color: var(--terminal-white) !important;
+}
+
+.terminal-theme .cm-variableName {
+  color: var(--terminal-white) !important;
+}
+
+.terminal-theme .cm-def {
+  color: var(--terminal-purple) !important;
+}
+
+.terminal-theme .cm-function {
+  color: var(--terminal-yellow) !important;
+}
+
+.terminal-theme .cm-atom {
+  color: var(--terminal-blue) !important;
+}
+
+/* Focus mode */
+.terminal-theme.focus-mode .editor-header,
+.terminal-theme.focus-mode .status-bar {
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.terminal-theme.focus-mode:hover .editor-header,
+.terminal-theme.focus-mode:hover .status-bar {
+  opacity: 1;
+} 

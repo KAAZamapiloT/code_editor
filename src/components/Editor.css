@@ -1,0 +1,308 @@
+.editor-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  position: relative;
+}
+
+/* VS Code dark theme (default) */
+.dark-theme {
+  --bg-color: #1e1e1e;
+  --header-bg: #252526;
+  --header-text: #cccccc;
+  --border-color: #333333;
+  --button-bg: #0e639c;
+  --button-hover: #1177bb;
+  --status-bar-bg: #007acc;
+  --status-bar-text: #ffffff;
+}
+
+/* Light theme */
+.light-theme {
+  --bg-color: #f5f5f5;
+  --header-bg: #e4e4e4;
+  --header-text: #333333;
+  --border-color: #c6c6c6;
+  --button-bg: #0e70c0;
+  --button-hover: #228BDA;
+  --status-bar-bg: #007acc;
+  --status-bar-text: #ffffff;
+}
+
+.editor-header {
+  background-color: var(--header-bg);
+  color: var(--header-text);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border-color);
+  z-index: 10;
+}
+
+.file-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.file-path {
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 300px;
+}
+
+.file-type {
+  padding: 2px 6px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  font-size: 12px;
+  color: var(--header-text);
+}
+
+.offline-indicator {
+  background-color: #d32f2f;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: bold;
+  animation: blink 2s infinite;
+}
+
+@keyframes blink {
+  0% { opacity: 1; }
+  50% { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+
+.editor-actions {
+  display: flex;
+  align-items: center;
+}
+
+.action-button {
+  background-color: var(--button-bg);
+  color: white;
+  border: none;
+  border-radius: 3px;
+  padding: 4px 8px;
+  margin-left: 8px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.action-button:hover {
+  background-color: var(--button-hover);
+}
+
+.theme-selector {
+  background-color: var(--header-bg);
+  color: var(--header-text);
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+  padding: 4px 8px;
+  margin-left: 8px;
+  font-size: 12px;
+}
+
+.editor-content {
+  flex: 1;
+  overflow: hidden;
+  background-color: var(--bg-color);
+  position: relative;
+}
+
+.code-mirror-wrapper {
+  height: 100%;
+}
+
+/* Command Palette */
+.command-palette {
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 500px;
+  max-width: 90%;
+  background-color: var(--bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+}
+
+.command-palette-header {
+  padding: 10px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.command-palette-header input {
+  width: 100%;
+  padding: 6px 10px;
+  font-size: 14px;
+  border: none;
+  background-color: var(--bg-color);
+  color: var(--header-text);
+  outline: none;
+}
+
+.command-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.command-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 10px;
+  cursor: pointer;
+  color: var(--header-text);
+}
+
+.command-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.command-shortcut {
+  color: #888;
+  font-size: 12px;
+}
+
+/* Notifications */
+.notifications {
+  position: fixed;
+  bottom: 30px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.notification {
+  background-color: var(--button-bg);
+  color: white;
+  padding: 8px 12px;
+  margin-top: 10px;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  animation: fadeInOut 3s forwards;
+  font-size: 13px;
+  max-width: 300px;
+}
+
+.notification.error {
+  background-color: #d32f2f;
+}
+
+.notification.warning {
+  background-color: #f57c00;
+}
+
+.notification.info {
+  background-color: var(--button-bg);
+}
+
+.notification.success {
+  background-color: #2e7d32;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateY(20px); }
+  10% { opacity: 1; transform: translateY(0); }
+  90% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-20px); }
+}
+
+/* Terminal styles */
+.terminal-wrapper {
+  height: 250px;
+  border-top: 1px solid var(--border-color);
+  background-color: #000;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.terminal-header {
+  background-color: var(--header-bg);
+  color: var(--header-text);
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+.terminal-close {
+  background: none;
+  border: none;
+  color: var(--header-text);
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.terminal-close:hover {
+  color: white;
+}
+
+.terminal-container {
+  flex: 1;
+  padding: 5px;
+}
+
+/* Sidebar visibility toggle */
+[data-sidebar-visible="false"] ~ .main-container .left-panel {
+  display: none;
+}
+
+[data-sidebar-visible="false"] ~ .main-container .content-area {
+  margin-left: 0;
+}
+
+/* Focus mode styles */
+.focus-mode .editor-header,
+.focus-mode .status-bar,
+.focus-mode .tabs-container {
+  display: none !important;
+}
+
+.focus-mode .editor-content {
+  height: 100vh !important;
+}
+
+.focus-mode .terminal-wrapper {
+  display: none !important;
+}
+
+/* Exit focus mode button - shown only in focus mode */
+.focus-mode-exit {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  border-radius: 3px;
+  padding: 4px 8px;
+  cursor: pointer;
+  z-index: 1000;
+  display: none;
+}
+
+.focus-mode .focus-mode-exit {
+  display: block;
+}
+
+/* Offline mode adjustments */
+.glitch-theme .offline-indicator {
+  background-color: var(--glitch-red);
+  color: var(--glitch-bg);
+  border: 1px solid var(--glitch-red);
+}
+
+.terminal-theme .offline-indicator {
+  background-color: var(--terminal-red);
+  color: var(--terminal-bg);
+  border: 1px solid var(--terminal-red);
+} 
