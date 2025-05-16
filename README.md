@@ -1,66 +1,197 @@
-# Tauri CodeMirror Editor
+# GLITCH.CRT_EDITOR
 
-A modern code editor built with SvelteKit and Tauri.
+A terminal-style code editor with CRT display effects built with Electron and React.
 
-## Requirements
+## Features
 
-- [Node.js](https://nodejs.org/) (v16 or newer)
-- [Rust](https://www.rust-lang.org/tools/install) (for Tauri native capabilities)
+- Retro CRT display with scan lines and glitch effects
+- Dark Terminal theme for a pure command-line experience
+- Terminal integration with real shell access (via xterm.js)
+- Syntax highlighting for multiple languages:
+  - JavaScript/TypeScript
+  - Python
+  - HTML/CSS
+  - C/C++
+  - Java
+  - Rust
+  - PHP
+  - SQL
+  - XML/SVG
+  - Markdown
+  - JSON
+- VIM keybinding support
+- Focus mode for distraction-free coding
+- File operations (open, save)
+- Cross-platform support (Windows, Linux)
+- Robust offline mode with fallback editor system
 
-## Quick Start
+## Keyboard Shortcuts
 
-Windows:
-```sh
-# Run the development server (web only)
-run-dev.bat
+- `Ctrl+S` - Save file
+- `Ctrl+Shift+P` - Open command palette
+- `Ctrl+Shift+T` - Cycle through themes
+- `Ctrl+B` - Toggle sidebar
+- `Ctrl+`` - Toggle terminal
+- `F11` - Toggle focus mode
 
-# Run with Tauri native capabilities
-run-dev.bat tauri
+## Prerequisites
 
-# Build the application
-build-windows.bat
+- Node.js (v14 or higher)
+- npm (v6 or higher)
+- For Linux: gcc-c++, make, python3
+- For Fedora Linux: libxcrypt-compat
 
-# Run the built application
-run-app.bat
+## Getting Started
+
+### Clone the Repository
+
+```bash
+git clone https://github.com/yourusername/code-editor.git
+cd code-editor
 ```
 
-Unix/macOS:
-```sh
-# Install dependencies
-npm install --legacy-peer-deps
+### Setup and Development
 
-# Run in development mode (web only)
-npm run dev
+The project includes helper scripts for both Linux and Windows to simplify development.
 
-# Run with Tauri native capabilities
-npm run tauri:dev
+#### Linux
 
-# Build for production
-npm run build
-npm run tauri:build
+Install dependencies:
+```bash
+./dev-setup.sh install
+```
+
+Run in development mode:
+```bash
+./run-dev.sh
+```
+
+Build the application:
+```bash
+./build-linux.sh
+```
+
+Run the built application:
+```bash
+./run-app.sh
+```
+
+#### Windows
+
+Install dependencies:
+```cmd
+dev-setup.bat install
+```
+
+Run in development mode:
+```cmd
+run-dev.bat
+```
+
+Build the application:
+```cmd
+build-windows.bat
+```
+
+Run the built application:
+```cmd
+run-app.bat
 ```
 
 ## Project Structure
 
-- `/src` - SvelteKit frontend code
-- `/src/entry` - Entry point configuration UI
-- `/src/lib` - Shared components and utilities
-- `/src-tauri` - Tauri native code (Rust)
-- `/public` - Static assets
+- `src/` - React frontend code
+  - `components/` - UI components (Editor, FileExplorer, StatusBar)
+  - `pages/` - Application pages (EditorPage)
+- `electron/` - Electron main process code
+- `public/` - Static assets
+  - `offline.html` - Offline mode landing page
+  - `standalone.html` - Fallback editor for when React app fails to load
+- `build/` - Built React application
+- `dist/` - Built Electron application
 
-## Features
-- CodeMirror 6 editor with language packages
-- Tauri PTY + Xterm.js terminal
-- File open/save via Tauri FS API
-- VS Code theming
-- Command Palette (Ctrl+Shift+P)
-- Multiple entry points with configurable settings
-- Accessibility: keyboard navigation, ARIA, screen-reader support
+## Themes
 
-## Configuration
+### Glitch CRT
+A retro-style theme with green text on black background, scan lines, and glitch animations to mimic old CRT monitors.
 
-The editor can be configured via the entry page at `/entry`. Settings include:
-- Theme selection (dark/light)
-- Terminal visibility
-- File explorer visibility
-- Startup file selection 
+### Dark Terminal
+A pure dark terminal theme with minimal styling for distraction-free coding.
+
+### Light & Dark
+Standard light and dark themes for modern coding.
+
+## Creating a Release
+
+To create a release build:
+
+1. For Linux: `./build-linux.sh`
+2. For Windows: `build-windows.bat`
+
+The output will be in the `dist/` directory.
+
+## Testing Offline Mode
+
+The application includes a robust offline fallback mechanism that activates when the React app fails to load.
+
+### Testing on Linux:
+
+```bash
+./test-offline.sh
+```
+
+### Testing on Windows:
+
+```cmd
+test-offline.bat
+```
+
+The offline mode includes:
+- Basic text editing capabilities
+- File open/save functionality
+- CRT styling and animations
+- Terminal-style interface
+
+## Troubleshooting
+
+### Blank Window Issues
+
+If you encounter a blank window when running the application:
+
+1. Try running the offline test script to verify the fallback system works:
+   - Linux: `./test-offline.sh`
+   - Windows: `test-offline.bat`
+
+2. Rebuild the application with explicit HTML file copying:
+   - Linux: `./build-run.sh build`
+   - Windows: `build-run.bat build`
+
+3. Make sure the `standalone.html` file exists in the build directory.
+
+### Linux Issues
+
+If you encounter errors related to native modules (like `node-pty`), try rebuilding them:
+
+```bash
+npm rebuild
+```
+
+For Fedora users, you may need to install additional dependencies:
+
+```bash
+sudo dnf install -y libxcrypt-compat
+```
+
+### Build Issues
+
+If you encounter "Unexpected end of JSON input" errors during build, try cleaning your npm cache:
+
+```bash
+rm -rf node_modules package-lock.json
+npm cache clean --force
+npm install
+```
+
+## License
+
+MIT 

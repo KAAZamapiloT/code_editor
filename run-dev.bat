@@ -12,21 +12,10 @@ IF %ERRORLEVEL% NEQ 0 (
 REM Check if dependencies are installed
 if not exist node_modules (
     echo Installing dependencies...
-    npm install --legacy-peer-deps
-    IF %ERRORLEVEL% NEQ 0 (
-        echo Error: npm install failed
-        exit /b %ERRORLEVEL%
-    )
+    call npm install
 )
 
 echo Starting development server...
-REM Check if Tauri is requested
-if "%1"=="tauri" (
-    echo Running with Tauri native shell...
-    npm run tauri:dev
-) else (
-    echo Running in web browser mode...
-    npm run dev
-)
+call npm run electron:dev
 
 exit /b 0 

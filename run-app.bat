@@ -1,15 +1,13 @@
 @echo off
-echo Starting Code Editor application...
+echo Starting Code Editor...
 
-set APP_PATH=src-tauri\target\release\tauri-codemirror-editor.exe
-
-if not exist %APP_PATH% (
-    echo Error: Application not found at %APP_PATH%
-    echo Please run build-windows.bat first to build the application.
-    exit /b 1
+rem Check if app is built
+if not exist dist\win-unpacked (
+    echo Application not built. Building now...
+    call build-windows.bat
 )
 
 echo Launching application...
-start "" %APP_PATH%
+start "" "dist\win-unpacked\Code Editor.exe"
 
 exit /b 0 

@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="description" content="GLITCH.CRT_EDITOR - Offline Text Editor with Terminal Styling" />
+  <title>GLITCH.CRT_EDITOR | STANDALONE MODE</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Consolas', 'Courier New', monospace;
+      background-color: #000;
+      color: #00FF41;
+      overflow: hidden;
+    }
+    
+    .offline-container {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      position: relative;
+    }
+    
+    .crt-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 1000;
+      pointer-events: none;
+      background: linear-gradient(
+        to bottom,
+        transparent 50%,
+        rgba(0, 0, 0, 0.3) 50%
+      );
+      background-size: 100% 2px;
+    }
+    
+    .crt-overlay::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(
+        ellipse at center,
+        rgba(0, 35, 8, 0.1) 0%,
+        transparent 70%,
+        rgba(0, 0, 0, 0.3) 100%
+      );
+    }
+    
+    header {
+      background-color: #0D0D0D;
+      color: #00FF41;
+      padding: 10px 20px;
+      border-bottom: 1px solid rgba(0, 255, 65, 0.5);
+      font-family: monospace;
+      font-size: 24px;
+      text-transform: uppercase;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .menu-bar {
+      background-color: #0D0D0D;
+      padding: 5px 0;
+      border-bottom: 1px solid rgba(0, 255, 65, 0.5);
+      display: flex;
+    }
+    
+    .menu-item {
+      position: relative;
+      color: #00FF41;
+      padding: 5px 15px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    
+    .menu-item:hover {
+      background-color: #1a1a1a;
+    }
+    
+    .menu-dropdown {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background-color: #0D0D0D;
+      border: 1px solid #00FF41;
+      z-index: 1001;
+      min-width: 180px;
+    }
+    
+    .menu-item:hover .menu-dropdown {
+      display: block;
+    }
+    
+    .menu-dropdown-item {
+      padding: 8px 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .menu-dropdown-item:hover {
+      background-color: #1a1a1a;
+    }
+    
+    .shortcut {
+      color: rgba(0, 255, 65, 0.7);
+      font-size: 0.9em;
+      margin-left: 15px;
+    }
+    
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      overflow: auto;
+    }
+    
+    footer {
+      background-color: #0D0D0D;
+      padding: 5px 10px;
+      border-top: 1px solid rgba(0, 255, 65, 0.5);
+      font-family: monospace;
+      display: flex;
+      justify-content: space-between;
+    }
+    
+    #editor {
+      flex: 1;
+      background-color: #111;
+      color: #00FF41;
+      border: 1px solid rgba(0, 255, 65, 0.5);
+      padding: 10px;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 16px;
+      margin-bottom: 20px;
+      resize: none;
+    }
+    
+    .buttons {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    
+    button {
+      background-color: #111;
+      color: #00FF41;
+      border: 1px solid #00FF41;
+      padding: 8px 15px;
+      font-family: monospace;
+      text-transform: uppercase;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    
+    button:hover {
+      background-color: #222;
+      box-shadow: 0 0 8px rgba(0, 255, 65, 0.5);
+    }
+    
+    .scan {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 10px;
+      background: rgba(0, 255, 65, 0.1);
+      z-index: 999;
+      pointer-events: none;
+      animation: scanline 8s linear infinite;
+    }
+    
+    @keyframes scanline {
+      0% {
+        transform: translateY(-100%);
+      }
+      100% {
+        transform: translateY(100vh);
+      }
+    }
+    
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      z-index: 1002;
+    }
+    
+    .modal-content {
+      background-color: #0D0D0D;
+      border: 1px solid #00FF41;
+      width: 50%;
+      max-width: 500px;
+      margin: 15% auto;
+      padding: 20px;
+    }
+    
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(0, 255, 65, 0.5);
+      padding-bottom: 10px;
+      margin-bottom: 15px;
+    }
+    
+    .close-btn {
+      color: #00FF41;
+      font-size: 24px;
+      cursor: pointer;
+    }
+    
+    .modal-body {
+      margin-bottom: 15px;
+    }
+    
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="offline-container">
+    <div class="crt-overlay"></div>
+    <div class="scan"></div>
+    
+    <header>
+      <div>GLITCH.CRT_EDITOR</div>
+      <div id="clock">00:00:00</div>
+    </header>
+    
+    <div class="menu-bar">
+      <div class="menu-item">
+        File
+        <div class="menu-dropdown">
+          <div class="menu-dropdown-item" id="menuNew">New <span class="shortcut">Ctrl+N</span></div>
+          <div class="menu-dropdown-item" id="menuOpen">Open <span class="shortcut">Ctrl+O</span></div>
+          <div class="menu-dropdown-item" id="menuSave">Save <span class="shortcut">Ctrl+S</span></div>
+          <div class="menu-dropdown-item" id="menuSaveAs">Save As <span class="shortcut">Ctrl+Shift+S</span></div>
+          <div class="menu-dropdown-item" id="menuQuit">Quit <span class="shortcut">Ctrl+Q</span></div>
+        </div>
+      </div>
+      <div class="menu-item">
+        Edit
+        <div class="menu-dropdown">
+          <div class="menu-dropdown-item" id="menuCut">Cut <span class="shortcut">Ctrl+X</span></div>
+          <div class="menu-dropdown-item" id="menuCopy">Copy <span class="shortcut">Ctrl+C</span></div>
+          <div class="menu-dropdown-item" id="menuPaste">Paste <span class="shortcut">Ctrl+V</span></div>
+          <div class="menu-dropdown-item" id="menuSelectAll">Select All <span class="shortcut">Ctrl+A</span></div>
+        </div>
+      </div>
+      <div class="menu-item">
+        View
+        <div class="menu-dropdown">
+          <div class="menu-dropdown-item" id="menuGlitchEffect">Toggle Glitch Effect</div>
+          <div class="menu-dropdown-item" id="menuScanline">Toggle Scanlines</div>
+        </div>
+      </div>
+      <div class="menu-item">
+        Help
+        <div class="menu-dropdown">
+          <div class="menu-dropdown-item" id="menuAbout">About</div>
+          <div class="menu-dropdown-item" id="menuShortcuts">Keyboard Shortcuts</div>
+        </div>
+      </div>
+    </div>
+    
+    <main>
+      <div class="buttons">
+        <button id="openBtn">Open File</button>
+        <button id="saveBtn">Save File</button>
+        <button id="newBtn">New File</button>
+      </div>
+      <textarea id="editor" placeholder="Type your code here..."></textarea>
+    </main>
+    
+    <footer>
+      <span>GLITCH.CRT_EDITOR v1.1.0</span>
+      <span id="status">STANDALONE MODE</span>
+    </footer>
+  </div>
+  
+  <!-- About Modal -->
+  <div id="aboutModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>About GLITCH.CRT_EDITOR</h2>
+        <span class="close-btn" data-modal="aboutModal">&times;</span>
+      </div>
+      <div class="modal-body">
+        <p>GLITCH.CRT_EDITOR v1.1.0</p>
+        <p>A terminal-style code editor with CRT display effects</p>
+        <p>Currently running in OFFLINE STANDALONE MODE</p>
+      </div>
+      <div class="modal-footer">
+        <button class="close-modal" data-modal="aboutModal">Close</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Shortcuts Modal -->
+  <div id="shortcutsModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Keyboard Shortcuts</h2>
+        <span class="close-btn" data-modal="shortcutsModal">&times;</span>
+      </div>
+      <div class="modal-body">
+        <p><strong>Ctrl+N</strong> - New File</p>
+        <p><strong>Ctrl+O</strong> - Open File</p>
+        <p><strong>Ctrl+S</strong> - Save File</p>
+        <p><strong>Ctrl+Shift+S</strong> - Save As</p>
+        <p><strong>Ctrl+Q</strong> - Quit</p>
+        <p><strong>Ctrl+X</strong> - Cut</p>
+        <p><strong>Ctrl+C</strong> - Copy</p>
+        <p><strong>Ctrl+V</strong> - Paste</p>
+        <p><strong>Ctrl+A</strong> - Select All</p>
+      </div>
+      <div class="modal-footer">
+        <button class="close-modal" data-modal="shortcutsModal">Close</button>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // Current file path
+    let currentFilePath = null;
+    
+    // Update clock
+    function updateClock() {
+      const now = new Date();
+      const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      document.getElementById('clock').textContent = time;
+    }
+    
+    setInterval(updateClock, 1000);
+    updateClock();
+    
+    // File operations
+    function newFile() {
+      if (document.getElementById('editor').value.trim() !== '') {
+        if (confirm('Create a new file? Unsaved changes will be lost.')) {
+          document.getElementById('editor').value = '';
+          document.getElementById('status').textContent = 'NEW FILE';
+          currentFilePath = null;
+        }
+      } else {
+        document.getElementById('editor').value = '';
+        document.getElementById('status').textContent = 'NEW FILE';
+        currentFilePath = null;
+      }
+    }
+    
+    function openFile() {
+      window.electron.ipcRenderer.invoke('open-file-dialog').then(result => {
+        if (result && result.content) {
+          document.getElementById('editor').value = result.content;
+          document.getElementById('status').textContent = 'FILE: ' + result.filePath.split(/[\/\\]/).pop();
+          currentFilePath = result.filePath;
+        }
+      }).catch(err => {
+        console.error('Failed to open file:', err);
+      });
+    }
+    
+    function saveFile() {
+      if (currentFilePath) {
+        window.electron.ipcRenderer.invoke('save-file', { 
+          filePath: currentFilePath,
+          content: document.getElementById('editor').value 
+        }).then(result => {
+          if (result && result.success) {
+            document.getElementById('status').textContent = 'SAVED: ' + currentFilePath.split(/[\/\\]/).pop();
+          }
+        }).catch(err => {
+          console.error('Failed to save file:', err);
+          saveFileAs();
+        });
+      } else {
+        saveFileAs();
+      }
+    }
+    
+    function saveFileAs() {
+      window.electron.ipcRenderer.invoke('save-file-dialog', {
+        content: document.getElementById('editor').value
+      }).then(result => {
+        if (result && result.success) {
+          currentFilePath = result.filePath;
+          document.getElementById('status').textContent = 'SAVED: ' + result.filePath.split(/[\/\\]/).pop();
+        }
+      }).catch(err => {
+        console.error('Failed to save file:', err);
+      });
+    }
+    
+    // Button event handlers
+    document.getElementById('newBtn').addEventListener('click', newFile);
+    document.getElementById('openBtn').addEventListener('click', openFile);
+    document.getElementById('saveBtn').addEventListener('click', saveFile);
+    
+    // Menu event handlers
+    document.getElementById('menuNew').addEventListener('click', newFile);
+    document.getElementById('menuOpen').addEventListener('click', openFile);
+    document.getElementById('menuSave').addEventListener('click', saveFile);
+    document.getElementById('menuSaveAs').addEventListener('click', saveFileAs);
+    document.getElementById('menuQuit').addEventListener('click', () => {
+      if (document.getElementById('editor').value.trim() !== '' && !confirm('Quit? Unsaved changes will be lost.')) {
+        return;
+      }
+      window.electron.ipcRenderer.invoke('quit-app');
+    });
+    
+    // Edit menu handlers
+    document.getElementById('menuCut').addEventListener('click', () => {
+      document.execCommand('cut');
+    });
+    
+    document.getElementById('menuCopy').addEventListener('click', () => {
+      document.execCommand('copy');
+    });
+    
+    document.getElementById('menuPaste').addEventListener('click', () => {
+      document.execCommand('paste');
+    });
+    
+    document.getElementById('menuSelectAll').addEventListener('click', () => {
+      document.getElementById('editor').select();
+    });
+    
+    // View menu handlers
+    document.getElementById('menuGlitchEffect').addEventListener('click', () => {
+      document.querySelector('.crt-overlay').style.display = 
+        document.querySelector('.crt-overlay').style.display === 'none' ? 'block' : 'none';
+    });
+    
+    document.getElementById('menuScanline').addEventListener('click', () => {
+      document.querySelector('.scan').style.display = 
+        document.querySelector('.scan').style.display === 'none' ? 'block' : 'none';
+    });
+    
+    // Help menu handlers
+    document.getElementById('menuAbout').addEventListener('click', () => {
+      document.getElementById('aboutModal').style.display = 'block';
+    });
+    
+    document.getElementById('menuShortcuts').addEventListener('click', () => {
+      document.getElementById('shortcutsModal').style.display = 'block';
+    });
+    
+    // Modal handlers
+    document.querySelectorAll('.close-btn, .close-modal').forEach(elem => {
+      elem.addEventListener('click', () => {
+        const modalId = elem.dataset.modal;
+        document.getElementById(modalId).style.display = 'none';
+      });
+    });
+    
+    // Global keyboard shortcuts
+    document.addEventListener('keydown', e => {
+      // Ctrl+N - New File
+      if (e.ctrlKey && e.key === 'n') {
+        e.preventDefault();
+        newFile();
+      }
+      
+      // Ctrl+O - Open File
+      if (e.ctrlKey && e.key === 'o') {
+        e.preventDefault();
+        openFile();
+      }
+      
+      // Ctrl+S - Save File
+      if (e.ctrlKey && e.key === 's' && !e.shiftKey) {
+        e.preventDefault();
+        saveFile();
+      }
+      
+      // Ctrl+Shift+S - Save As
+      if (e.ctrlKey && e.shiftKey && e.key === 'S') {
+        e.preventDefault();
+        saveFileAs();
+      }
+      
+      // Ctrl+Q - Quit
+      if (e.ctrlKey && e.key === 'q') {
+        e.preventDefault();
+        if (document.getElementById('editor').value.trim() !== '' && !confirm('Quit? Unsaved changes will be lost.')) {
+          return;
+        }
+        window.electron.ipcRenderer.invoke('quit-app');
+      }
+    });
+  </script>
+</body>
+</html> 
