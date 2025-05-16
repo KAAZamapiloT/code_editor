@@ -14,6 +14,7 @@ import { sql } from '@codemirror/lang-sql';
 import { xml } from '@codemirror/lang-xml';
 import { vim } from '@replit/codemirror-vim';
 import { EditorView } from '@codemirror/view';
+import { autocompletion, completionKeymap } from '@codemirror/autocomplete';
 import { StatusBar } from './StatusBar';
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
@@ -112,7 +113,7 @@ const Editor = ({ initialContent = '', filePath, fileTree, onSaveSuccess }) => {
   const [currentFilePath, setCurrentFilePath] = useState(filePath);
   const [isDirty, setIsDirty] = useState(false);
   const [mode, setMode] = useState('normal'); // normal, insert, visual
-  const [theme, setTheme] = useState('glitch'); // glitch, crt, terminal, dark, light
+  const [theme, setTheme] = useState('glitch'); // glitch, crt, dark-crt, terminal, dark, light
   const [lineCount, setLineCount] = useState(0);
   const [cursorPosition, setCursorPosition] = useState({ line: 1, col: 1 });
   const [showCommandPalette, setShowCommandPalette] = useState(false);
@@ -384,59 +385,64 @@ const Editor = ({ initialContent = '', filePath, fileTree, onSaveSuccess }) => {
   };
 
   const handleKeyDown = (event) => {
-    // Save on Ctrl+S or Cmd+S
-    if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+    // Save: Ctrl+S
+    if (event.ctrlKey && event.key === 's') {
       event.preventDefault();
       handleSave();
     }
     
-    // Toggle command palette with Ctrl+Shift+P
-    if ((event.ctrlKey || event.metaKey) && event.shiftKey && event.key === 'p') {
+    // Toggle terminal: Ctrl+`
+    if (event.ctrlKey && event.key === '`') {
       event.preventDefault();
-      setShowCommandPalette(!showCommandPalette);
-      setTimeout(() => {
-        if (commandInputRef.current) {
-          commandInputRef.current.focus();
-        }
-      }, 50);
-    }
-    
-    // Cycle through themes with Ctrl+Shift+T
-    if ((event.ctrlKey || event.metaKey) && event.shiftKey && event.key === 't') {
-      event.preventDefault();
-      const themes = ['glitch', 'crt', 'terminal', 'dark', 'light'];
-      const nextIndex = (themes.indexOf(theme) + 1) % themes.length;
-      setTheme(themes[nextIndex]);
+      setShowTerminal(!showTerminal);
       
-      // Save theme preference to localStorage
-      try {
-        localStorage.setItem('editor-theme', themes[nextIndex]);
-      } catch (error) {
-        console.error('Failed to save theme preference:', error);
+      // Save preference
+      if (window.localStorage) {
+        const settings = JSON.parse(localStorage.getItem('editor-settings') || '{}');
+        settings.showTerminal = !showTerminal;
+        localStorage.setItem('editor-settings', JSON.stringify(settings));
+      }
+      
+      // Notify Electron if available
+      if (window.electron) {
+        window.electron.ipcRenderer.invoke('save-settings', { showTerminal: !showTerminal })
+          .catch(error => console.error('Failed to save terminal setting:', error));
       }
     }
     
-    // Toggle sidebar with Ctrl+B
-    if ((event.ctrlKey || event.metaKey) && event.key === 'b') {
+    // Toggle sidebar: Ctrl+B
+    if (event.ctrlKey && event.key === 'b') {
       event.preventDefault();
-      setShowSidebar(!showSidebar);
+      toggleFileTree();
     }
     
-    // Toggle terminal with Ctrl+`
-    if ((event.ctrlKey || event.metaKey) && event.key === '`') {
+    // Toggle command palette: Ctrl+Shift+P
+    if (event.ctrlKey && event.shiftKey && event.key === 'P') {
       event.preventDefault();
-      setShowTerminal(!showTerminal);
+      setShowCommandPalette(!showCommandPalette);
     }
     
-    // Toggle focus mode with F11
-    if (event.key === 'F11') {
+    // Toggle theme: Ctrl+Shift+T
+    if (event.ctrlKey && event.shiftKey && event.key === 'T') {
       event.preventDefault();
-      setFocusMode(!focusMode);
-    }
-    
-    // Enter vim command mode with Esc
-    if (event.key === 'Escape') {
-      setMode('normal');
+      // Cycle through themes
+      const themes = ['glitch', 'crt', 'dark-crt', 'terminal', 'dark', 'light'];
+      const currentIndex = themes.indexOf(theme);
+      const nextTheme = themes[(currentIndex + 1) % themes.length];
+      setTheme(nextTheme);
+      
+      // Save preference
+      if (window.localStorage) {
+        const settings = JSON.parse(localStorage.getItem('editor-settings') || '{}');
+        settings.theme = nextTheme;
+        localStorage.setItem('editor-settings', JSON.stringify(settings));
+      }
+      
+      // Notify Electron if available
+      if (window.electron) {
+        window.electron.ipcRenderer.invoke('save-settings', { theme: nextTheme })
+          .catch(error => console.error('Failed to save theme setting:', error));
+      }
     }
   };
   
@@ -453,6 +459,7 @@ const Editor = ({ initialContent = '', filePath, fileTree, onSaveSuccess }) => {
     switch (theme) {
       case 'glitch': return 'glitch-theme';
       case 'crt': return 'crt-theme';
+      case 'dark-crt': return 'dark-crt-theme';
       case 'terminal': return 'terminal-theme';
       case 'light': return 'light-theme';
       default: return 'dark-theme';
@@ -497,9 +504,64 @@ const Editor = ({ initialContent = '', filePath, fileTree, onSaveSuccess }) => {
   };
 
   const isGlitchTheme = theme === 'glitch';
-  const isCRTTheme = theme === 'crt';
+  const isCRTTheme = theme === 'crt' || theme === 'dark-crt';
   const isTerminalTheme = theme === 'terminal';
   const hasSpecialEffects = isGlitchTheme || isCRTTheme;
+
+  // Toggle file tree visibility
+  const toggleFileTree = () => {
+    setShowSidebar(!showSidebar);
+    
+    // Save the preference
+    if (window.localStorage) {
+      const settings = JSON.parse(localStorage.getItem('editor-settings') || '{}');
+      settings.showSidebar = !showSidebar;
+      localStorage.setItem('editor-settings', JSON.stringify(settings));
+    }
+    
+    // Notify Electron (if available)
+    if (window.electron) {
+      window.electron.ipcRenderer.invoke('save-settings', { showSidebar: !showSidebar })
+        .catch(error => console.error('Failed to save sidebar setting:', error));
+    }
+  };
+
+  // Load saved settings
+  useEffect(() => {
+    // Attempt to load settings
+    if (window.localStorage) {
+      try {
+        const settings = JSON.parse(localStorage.getItem('editor-settings') || '{}');
+        
+        // Apply theme if saved
+        if (settings.theme) {
+          setTheme(settings.theme);
+        }
+        
+        // Apply sidebar visibility
+        if (settings.showSidebar !== undefined) {
+          setShowSidebar(settings.showSidebar);
+        }
+        
+        // Apply terminal visibility
+        if (settings.showTerminal !== undefined) {
+          setShowTerminal(settings.showTerminal);
+        }
+        
+        // Apply Vim mode
+        if (settings.vimMode) {
+          setMode(settings.vimMode === true ? 'normal' : 'insert');
+        }
+        
+        // Apply focus mode
+        if (settings.focusMode) {
+          setFocusMode(settings.focusMode);
+        }
+      } catch (error) {
+        console.error('Error loading editor settings:', error);
+      }
+    }
+  }, []);
 
   return (
     <div 
@@ -518,7 +580,7 @@ const Editor = ({ initialContent = '', filePath, fileTree, onSaveSuccess }) => {
           {isOfflineMode && <span className="offline-indicator">OFFLINE MODE</span>}
         </div>
         <div className="editor-actions">
-          <button className="action-button" onClick={() => setShowSidebar(!showSidebar)} title="Toggle Sidebar (Ctrl+B)">
+          <button className="action-button" onClick={toggleFileTree} title="Toggle Sidebar (Ctrl+B)">
             {showSidebar ? '◀' : '▶'}
           </button>
           <button className="action-button" onClick={() => setFocusMode(!focusMode)} title="Toggle Focus Mode (F11)">
@@ -544,6 +606,7 @@ const Editor = ({ initialContent = '', filePath, fileTree, onSaveSuccess }) => {
           >
             <option value="glitch">Glitch CRT</option>
             <option value="crt">CRT Terminal</option>
+            <option value="dark-crt">High Contrast CRT</option>
             <option value="terminal">Dark Terminal</option>
             <option value="dark">VS Code</option>
             <option value="light">Light</option>
@@ -557,20 +620,8 @@ const Editor = ({ initialContent = '', filePath, fileTree, onSaveSuccess }) => {
           height="100%"
           extensions={[
             getLanguageExtension(currentFilePath),
-            vim({
-              status: true,
-              cmdKeys: {
-                'ctrl-s': (cm) => {
-                  handleSave();
-                  return true;
-                }
-              },
-              onVimModeChange: (mode) => {
-                if (mode === 'insert') setMode('insert');
-                else if (mode === 'visual') setMode('visual');
-                else setMode('normal');
-              }
-            }),
+            EditorView.lineWrapping,
+            autocompletion(),
             EditorView.updateListener.of((update) => {
               if (update.selectionSet) {
                 const selection = update.state.selection.main;
@@ -585,6 +636,7 @@ const Editor = ({ initialContent = '', filePath, fileTree, onSaveSuccess }) => {
           onChange={handleChange}
           theme={hasSpecialEffects || isTerminalTheme ? 'dark' : theme}
           className={`code-mirror-wrapper ${isGlitchTheme ? 'glitch-text' : isCRTTheme ? 'crt-text' : ''}`}
+          onKeyDown={handleKeyDown}
         />
       </div>
       

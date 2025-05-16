@@ -4,10 +4,14 @@ A terminal-style code editor with CRT display effects built with Electron and Re
 
 ## Features
 
-- Retro CRT display with scan lines and glitch effects
+- Retro CRT display with realistic visual effects:
+  - Advanced lens distortion with curved screen simulation
+  - Dynamic scanlines and RGB color shifting
+  - Screen flicker and static noise effects
+  - VHS-style interference and glitch animations
 - Dark Terminal theme for a pure command-line experience
 - Terminal integration with real shell access (via xterm.js)
-- Syntax highlighting for multiple languages:
+- Vibrant multicolor syntax highlighting for multiple languages:
   - JavaScript/TypeScript
   - Python
   - HTML/CSS
@@ -19,11 +23,13 @@ A terminal-style code editor with CRT display effects built with Electron and Re
   - XML/SVG
   - Markdown
   - JSON
+- Intelligent code autocomplete
 - VIM keybinding support
 - Focus mode for distraction-free coding
 - File operations (open, save)
 - Cross-platform support (Windows, Linux)
 - Robust offline mode with fallback editor system
+- Seamless switching between online and offline modes
 
 ## Keyboard Shortcuts
 
@@ -33,6 +39,7 @@ A terminal-style code editor with CRT display effects built with Electron and Re
 - `Ctrl+B` - Toggle sidebar
 - `Ctrl+`` - Toggle terminal
 - `F11` - Toggle focus mode
+- `Ctrl+Space` - Show autocomplete suggestions
 
 ## Prerequisites
 
@@ -76,6 +83,11 @@ Run the built application:
 ./run-app.sh
 ```
 
+Run the offline editor:
+```bash
+./run-offline-editor.sh
+```
+
 #### Windows
 
 Install dependencies:
@@ -98,6 +110,11 @@ Run the built application:
 run-app.bat
 ```
 
+Run the offline editor:
+```cmd
+run-offline-editor.bat
+```
+
 ## Project Structure
 
 - `src/` - React frontend code
@@ -110,13 +127,41 @@ run-app.bat
 - `build/` - Built React application
 - `dist/` - Built Electron application
 
+## Offline vs Online Mode
+
+### Online Mode
+The full-featured React-based editor with all capabilities including:
+- Full syntax highlighting
+- Smart autocomplete with language-specific suggestions
+- All editor features and extensions
+- Terminal with shell access
+- Github integration
+
+### Offline Mode
+A lightweight fallback editor that works even when the React app fails to load:
+- Vibrant multicolor syntax highlighting using CodeMirror
+- Advanced CRT display effects with lens distortion
+- Realistic monitor curvature and screen reflection
+- Smart autocomplete support for common languages
+- File operations (open, save, create)
+- File tree browser
+- JavaScript and HTML execution
+- CRT display effects
+- Ability to switch to online mode when network becomes available
+
 ## Themes
 
 ### Glitch CRT
-A retro-style theme with green text on black background, scan lines, and glitch animations to mimic old CRT monitors.
+A retro-style theme with green text on black background, scan lines, and glitch animations to mimic old CRT monitors. Features multicolor syntax highlighting with bright neon colors.
 
 ### Dark Terminal
 A pure dark terminal theme with minimal styling for distraction-free coding.
+
+### Synthwave
+Purple gradient with pink text and glow effects for a 1980s retro vibe. Features bright neon colors with subtle text glow effects for a true retro coding experience.
+
+### Cyberpunk
+Dark blue with cyan text and magenta accents inspired by cyberpunk aesthetics. Features contrasting bright colors and subtle text shadow effects.
 
 ### Light & Dark
 Standard light and dark themes for modern coding.
@@ -145,12 +190,6 @@ The application includes a robust offline fallback mechanism that activates when
 ```cmd
 test-offline.bat
 ```
-
-The offline mode includes:
-- Basic text editing capabilities
-- File open/save functionality
-- CRT styling and animations
-- Terminal-style interface
 
 ## Troubleshooting
 

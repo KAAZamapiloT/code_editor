@@ -22,6 +22,40 @@ const shellArgs = process.platform === 'win32' ? [] : ['--login'];
 let isOffline = process.env.OFFLINE_MODE === 'true';
 console.log('Starting in offline mode:', isOffline);
 
+// Add IPC handler for launching online mode
+ipcMain.on('launch-online-mode', () => {
+  console.log('Switching to online mode...');
+  // Set offline mode to false in store
+  store.set('offlineMode', false);
+  
+  // Restart the app with OFFLINE_MODE=false
+  if (process.platform === 'win32') {
+    // On Windows, we need to spawn a new process
+    const appPath = process.execPath;
+    const args = process.argv.slice(1).filter(arg => !arg.includes('OFFLINE_MODE'));
+    require('child_process').spawn(appPath, args, { detached: true });
+    app.quit();
+  } else {
+    // On macOS and Linux, we can reload the current window
+    isOffline = false;
+    
+    // Reset the main window
+    if (mainWindow) {
+      const isDev = process.env.ELECTRON_START_URL;
+      const startUrl = isDev
+        ? process.env.ELECTRON_START_URL
+        : url.format({
+            pathname: path.join(__dirname, '../build/index.html'),
+            protocol: 'file:',
+            slashes: true
+          });
+      
+      console.log('Reloading window with URL:', startUrl);
+      mainWindow.loadURL(startUrl);
+    }
+  }
+});
+
 function createWindow() {
   // Create the browser window.
   mainWindow = new BrowserWindow({
@@ -385,6 +419,10 @@ ipcMain.on('start-terminal', (event) => {
   }
   
   try {
+    // Get appropriate shell based on platform
+    const shell = process.platform === 'win32' ? 'powershell.exe' : process.platform === 'darwin' ? '/bin/zsh' : '/bin/bash';
+    const shellArgs = [];
+    
     const terminal = pty.spawn(shell, shellArgs, {
       name: 'xterm-color',
       cols: 80,

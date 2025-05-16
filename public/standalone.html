@@ -6,6 +6,12 @@
   <meta name="theme-color" content="#000000" />
   <meta name="description" content="GLITCH.CRT_EDITOR - Offline Text Editor with Terminal Styling" />
   <title>GLITCH.CRT_EDITOR | STANDALONE MODE</title>
+  
+  <!-- CodeMirror CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/monokai.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.css">
+  
   <style>
     body, html {
       margin: 0;
@@ -15,6 +21,257 @@
       background-color: #000;
       color: #00FF41;
       overflow: hidden;
+    }
+    
+    /* Enhanced CRT lens effect with stronger distortion */
+    .crt-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 2000;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .crt-frame {
+      position: absolute;
+      top: -10%;
+      left: -10%;
+      right: -10%;
+      bottom: -10%;
+      border-radius: 30% / 10%;
+      box-shadow: 
+        0 0 40px rgba(0, 255, 65, 0.3) inset, 
+        0 0 100px rgba(0, 0, 0, 0.7) inset;
+      background: transparent;
+      transform: scale(1.1);
+      z-index: 2001;
+      opacity: 0.4;
+    }
+    
+    .crt-curved-border {
+      position: absolute;
+      top: -3%;
+      left: -3%;
+      right: -3%;
+      bottom: -3%;
+      border-radius: 20px;
+      box-shadow: 
+        0 0 20px rgba(0, 0, 0, 0.8) inset,
+        0 0 5px rgba(0, 255, 65, 0.2);
+      background: transparent;
+      z-index: 2002;
+      pointer-events: none;
+    }
+    
+    .crt-scanlines {
+      position: fixed;
+      top: -100%;
+      left: -100%;
+      right: -100%;
+      bottom: -100%;
+      background: linear-gradient(
+        to bottom,
+        transparent 50%,
+        rgba(0, 0, 0, 0.3) 50%
+      );
+      background-size: 100% 2px;
+      animation: scroll 0.5s linear infinite;
+      z-index: 2003;
+      opacity: 0.3;
+      pointer-events: none;
+      transform: translateZ(0);
+    }
+    
+    @keyframes scroll {
+      0% {
+        transform: translateY(0);
+      }
+      100% {
+        transform: translateY(2px);
+      }
+    }
+    
+    .monitor-reflection {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0.05) 0%,
+        transparent 20%
+      );
+      border-radius: 50% 50% 50% 50% / 20% 20% 20% 20%;
+      transform: rotate(-10deg);
+      z-index: 2004;
+      pointer-events: none;
+    }
+    
+    /* CodeMirror custom styles with enhanced multicolor syntax highlighting */
+    .CodeMirror {
+      height: 100%;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 16px;
+      line-height: 1.5;
+      background: #111 !important;
+    }
+    
+    /* Glitch theme with vibrant multicolor highlighting */
+    .theme-glitch .CodeMirror {
+      background-color: #111 !important;
+      color: #00FF41;
+      border: 1px solid rgba(0, 255, 65, 0.5);
+      box-shadow: 0 0 15px rgba(0, 255, 65, 0.2);
+    }
+    
+    .theme-glitch .CodeMirror-gutters {
+      background-color: #0a0a0a !important;
+      border-right: 1px solid rgba(0, 255, 65, 0.3);
+    }
+    
+    .theme-glitch .CodeMirror-linenumber {
+      color: rgba(0, 255, 65, 0.5);
+    }
+    
+    .theme-glitch .CodeMirror-cursor {
+      border-left: 2px solid #00FF41;
+      animation: blink 1s step-end infinite;
+    }
+    
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+    
+    /* Enhanced syntax highlighting colors for Glitch theme */
+    .theme-glitch .cm-keyword { color: #FF00FF !important; } /* Magenta */
+    .theme-glitch .cm-operator { color: #00FFFF !important; } /* Cyan */
+    .theme-glitch .cm-string { color: #FFFF00 !important; } /* Yellow */
+    .theme-glitch .cm-comment { color: #777777 !important; } /* Gray */
+    .theme-glitch .cm-variable { color: #00FF41 !important; } /* Green */
+    .theme-glitch .cm-def, .theme-glitch .cm-property { color: #00AAFF !important; } /* Blue */
+    .theme-glitch .cm-number { color: #FF5555 !important; } /* Red */
+    .theme-glitch .cm-atom { color: #FF00AA !important; } /* Pink */
+    .theme-glitch .cm-tag { color: #FF6600 !important; } /* Orange */
+    .theme-glitch .cm-attribute { color: #AAFFFF !important; } /* Light Cyan */
+    .theme-glitch .cm-builtin { color: #FFAAFF !important; } /* Light Magenta */
+    
+    /* Synthwave theme multicolor highlighting */
+    .theme-synthwave .CodeMirror {
+      background-color: rgba(20, 12, 28, 0.7) !important;
+      color: #ff7edb;
+      border-color: #ae46e6;
+      box-shadow: 0 0 20px rgba(174, 70, 230, 0.3);
+    }
+    
+    .theme-synthwave .CodeMirror-gutters {
+      background-color: rgba(20, 12, 28, 0.85) !important;
+      border-right: 1px solid rgba(174, 70, 230, 0.5);
+    }
+    
+    .theme-synthwave .CodeMirror-linenumber {
+      color: rgba(255, 126, 219, 0.5);
+    }
+    
+    /* Enhanced syntax highlighting for Synthwave theme */
+    .theme-synthwave .cm-keyword { color: #f92aad !important; text-shadow: 0 0 2px #f92aad; }
+    .theme-synthwave .cm-operator { color: #ff8b39 !important; }
+    .theme-synthwave .cm-string { color: #ffcc66 !important; text-shadow: 0 0 2px rgba(255, 204, 102, 0.5); }
+    .theme-synthwave .cm-comment { color: #7b83eb !important; }
+    .theme-synthwave .cm-variable { color: #ff7edb !important; }
+    .theme-synthwave .cm-def, .theme-synthwave .cm-property { color: #36f9f6 !important; text-shadow: 0 0 2px rgba(54, 249, 246, 0.5); }
+    .theme-synthwave .cm-number { color: #ff8b39 !important; }
+    .theme-synthwave .cm-atom { color: #c172ff !important; }
+    .theme-synthwave .cm-tag { color: #72f1b8 !important; text-shadow: 0 0 2px rgba(114, 241, 184, 0.5); }
+    
+    /* Cyberpunk theme multicolor highlighting */
+    .theme-cyberpunk .CodeMirror {
+      background-color: rgba(9, 24, 51, 0.7) !important;
+      color: #0abdc6;
+      border-color: #ea00d9;
+      box-shadow: 0 0 20px rgba(234, 0, 217, 0.3);
+    }
+    
+    .theme-cyberpunk .CodeMirror-gutters {
+      background-color: rgba(9, 24, 51, 0.85) !important;
+      border-right: 1px solid rgba(234, 0, 217, 0.5);
+    }
+    
+    .theme-cyberpunk .CodeMirror-linenumber {
+      color: rgba(10, 189, 198, 0.5);
+    }
+    
+    /* Enhanced syntax highlighting for Cyberpunk theme */
+    .theme-cyberpunk .cm-keyword { color: #ea00d9 !important; text-shadow: 0 0 3px rgba(234, 0, 217, 0.5); }
+    .theme-cyberpunk .cm-operator { color: #fffc00 !important; }
+    .theme-cyberpunk .cm-string { color: #ff0000 !important; text-shadow: 0 0 2px rgba(255, 0, 0, 0.5); }
+    .theme-cyberpunk .cm-comment { color: #0abdc6 !important; }
+    .theme-cyberpunk .cm-variable { color: #00ffc8 !important; }
+    .theme-cyberpunk .cm-def, .theme-cyberpunk .cm-property { color: #0abdc6 !important; }
+    .theme-cyberpunk .cm-number { color: #fcee0a !important; }
+    .theme-cyberpunk .cm-atom { color: #ff901f !important; text-shadow: 0 0 2px rgba(255, 144, 31, 0.5); }
+    .theme-cyberpunk .cm-tag { color: #ea00d9 !important; }
+    
+    /* CodeMirror hint styling with theme specific colors */
+    .CodeMirror-hints {
+      position: absolute;
+      z-index: 1200;
+      overflow: hidden;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      border-radius: 3px;
+      max-height: 20em;
+      overflow-y: auto;
+    }
+    
+    .theme-glitch .CodeMirror-hints {
+      background-color: #111;
+      border: 1px solid rgba(0, 255, 65, 0.5);
+      box-shadow: 0 0 10px rgba(0, 255, 65, 0.2);
+    }
+    
+    .theme-glitch .CodeMirror-hint {
+      color: #00FF41;
+      padding: 4px 8px;
+    }
+    
+    .theme-glitch .CodeMirror-hint-active {
+      background-color: rgba(0, 255, 65, 0.2);
+    }
+    
+    .theme-synthwave .CodeMirror-hints {
+      background-color: rgba(20, 12, 28, 0.9);
+      border: 1px solid #ae46e6;
+      box-shadow: 0 0 10px rgba(174, 70, 230, 0.3);
+    }
+    
+    .theme-synthwave .CodeMirror-hint {
+      color: #ff7edb;
+      padding: 4px 8px;
+    }
+    
+    .theme-synthwave .CodeMirror-hint-active {
+      background-color: rgba(174, 70, 230, 0.3);
+    }
+    
+    .theme-cyberpunk .CodeMirror-hints {
+      background-color: rgba(9, 24, 51, 0.9);
+      border: 1px solid #ea00d9;
+      box-shadow: 0 0 10px rgba(234, 0, 217, 0.3);
+    }
+    
+    .theme-cyberpunk .CodeMirror-hint {
+      color: #0abdc6;
+      padding: 4px 8px;
+    }
+    
+    .theme-cyberpunk .CodeMirror-hint-active {
+      background-color: rgba(234, 0, 217, 0.3);
     }
     
     .offline-container {
@@ -55,6 +312,136 @@
       );
     }
     
+    /* Enhanced CRT effects */
+    .crt-lens {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 999;
+      pointer-events: none;
+      border-radius: 15% / 5%;
+      box-shadow: inset 0 0 15px 5px rgba(0, 35, 8, 0.2);
+    }
+    
+    .crt-flicker {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 998;
+      pointer-events: none;
+      background-color: transparent;
+      opacity: 0;
+      animation: flicker 0.15s infinite;
+    }
+    
+    @keyframes flicker {
+      0% { opacity: 0; }
+      25% { opacity: 0; }
+      30% { opacity: 0.02; }
+      35% { opacity: 0; }
+      40% { opacity: 0; }
+      45% { opacity: 0.04; }
+      50% { opacity: 0; }
+      55% { opacity: 0.01; }
+      60% { opacity: 0; }
+      65% { opacity: 0; }
+      70% { opacity: 0.05; }
+      75% { opacity: 0; }
+      80% { opacity: 0; }
+      85% { opacity: 0.03; }
+      90% { opacity: 0; }
+      95% { opacity: 0.02; }
+      100% { opacity: 0; }
+    }
+    
+    .rgb-shift {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 997;
+      pointer-events: none;
+      mix-blend-mode: screen;
+      opacity: 0.3;
+      background-image: 
+        linear-gradient(to right, transparent, rgba(255, 0, 0, 0.2) 49.5%, transparent 50.5%),
+        linear-gradient(to right, transparent, rgba(0, 255, 0, 0.2) 50%, transparent 51%),
+        linear-gradient(to right, transparent, rgba(0, 0, 255, 0.2) 50.5%, transparent 51.5%);
+    }
+    
+    .static-noise {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 996;
+      pointer-events: none;
+      background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAABUhJREFUaEPtWu1126oQ/f6ke5sk7hs0bpLebtyN6yZxNo6ziZ1N4sfxJrGzSdwkaRt3E9a+wh90QQIESHac9Jx+tr/YFnA5c2eGy0CS8AS2JAm8/7FHZDqdPwGG4ckzIvp5fR0Peo7IB1kMgyQMvTyygnPJImSB/cXo56KPgfKBE0J0eXkVLJe/OFrr3d3f9unpe+Gu63sYRrher/H7929GlLH0/PwMzs/PsV5vbBS0MZwlbBgG6xNFEbbbLbxcLuO+CnqvRNbrB4RhiEkyQ5btkCRzhnS1WuF8/ob4qILEMqLf1uu1IMTkNb6fTCZIkgn2+wOiKEKWZVLgVvCP4ig3NzdotWIsFgsEQYDr62uuZ4ZFUcTXJslyOk0wmcyQpinieI792TB7JrLdbvH6+h+mc8aJTZIpQ/T4+MgEC2IOh0OhODbjOMbt7S2b1XQ642vv729Z/9y7DYO03+8535gsLi9f2JHTNITD4Yg8z4VfyEeGw4RzaPxiOp2yKNYBJm6ioyLIxaSUg4moXuRH1WHfH7Db7RCGIdbrNfvF4bAXz0wxmcw4cK57mZDpYpZlwi9yOTbNSL33A+32O5bLJZPlnMnz/IiqBE+XmxUXmy9m4jmTx3RxxEEyR5blsjBkEIFM1a+q20ILoehiBZt4vlpNxbkelQTuSfH4k59VZc+emRzc3t5gtXpgMXy8S8T58iOWy1eu7+vrP3h5+SDf4fJZ+QxyM5xOZ+R5CiLO+RtPShoh0mV3PCsW/E/41SXmZj/TvmaJkN+8vGywWCyw2WwQRTGb5PsTtZbIzGg+ew1HZHB/f4+7u3/x+fkp4vsnpxC1n05j9U+u90K5Te6jXucrpX/laqwlEiB3BnP1j/rJpj6tj9U/pcYCRARluZzheDwKSPIXr67uEMexTNNCc+5cqc6fGcfwmGhXYSzU9dm2VcZiRl1OxlvJ6meq8g/xWZpm8uXk3DF+Dy/HTluVSU3Elkkpc5P3taCnefIT9qcy4IUA5P7TadlsBvVkl2WFuJR6OW+lsf6oW3/629vcVR9m13XFbjZTVojTm2CCsTnVC9qJnkiwk9mzspEkMrWrVcD/ozDkxEbzYDbK6fNHyxhF91/w43ipFSGwMp13X/4wI8Z5X3WBWNf6OtJE1I81wViiWxuJfgq6Itw2HosfXZ6bcecDqKQ8daFk1YUzbhMHcofp/aaf60JyHJdVikAjEoyySDG1c10YLVGqnOgrwsX7eswkcDf8fH/SgUFj7f/OI01mo5oOnYj6e9WEfdx2EXT5TlMdqPlZW7MxNVScAKoqwNZX9eAm4iqOXGW2OeaMtcWHq58r6PsGfZ8C9fHuLiB9iLXFir7/dn5vIqQT6NPXp1B3reMvTJoTn3sHcZ0afYj4I8aulyEvyPyD3nVE/lP8k3mktf7bFqrjaf6c9l0nw3Otf/lyqPgLDjOXI939S3n387SV89yYDztNxXfMKqTpCZVLNMIedbt3OqdEfKxtu3+3Bd+mjOpnw54LOHdsH5FO4bYprY6yZzCXb2irptwLxrZ8or+7Hfvut6G2i5yfmeyR6ctupvvv3yDRJHNRB9kGnTnY85z6nneRdYPFUgaeY2TkLAL9gkj7grJrwW57jzO+/sLIFbw++/oVLiU0fxcyVb3ENCMut+51Yp3yTC7xlVxta6JSwLriWM+BdXOodfPrC0bVe2N/uUXn9S9kTn3JluJzLl3DcRhKsvr/+2QrSewbR8XfHFonee6+549IV6nnIFOq3THe+WP2N86eRHPQ8h9YAAAAAElFTkSuQmCC');
+      background-repeat: repeat;
+      opacity: 0.03;
+      animation: noise 0.5s steps(10) infinite;
+    }
+    
+    @keyframes noise {
+      0% { transform: translateX(0px); }
+      10% { transform: translateX(-1px); }
+      20% { transform: translateX(1px); }
+      30% { transform: translateX(-1px); }
+      40% { transform: translateX(1px); }
+      50% { transform: translateX(-1px); }
+      60% { transform: translateX(1px); }
+      70% { transform: translateX(-1px); }
+      80% { transform: translateX(1px); }
+      90% { transform: translateX(-1px); }
+      100% { transform: translateX(0px); }
+    }
+    
+    .vhs-lines {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 995;
+      pointer-events: none;
+      background-image: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.1),
+        rgba(0, 0, 0, 0.1) 1px,
+        transparent 1px,
+        transparent 2px
+      );
+    }
+
+    /* Enhanced distortion glitch effect */
+    .glitch-distort {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 994;
+      pointer-events: none;
+      opacity: 0;
+      animation: glitchDistort 8s step-end infinite;
+    }
+
+    @keyframes glitchDistort {
+      0%, 100% { opacity: 0; }
+      5%, 5.1% { opacity: 0.2; transform: skew(0.3deg, 0deg); }
+      10%, 10.1% { opacity: 0; transform: skew(0deg, 0deg); }
+      27%, 27.1% { opacity: 0.2; transform: skew(-0.5deg, 0deg); }
+      27.2% { opacity: 0; transform: skew(0deg, 0deg); }
+      74%, 74.1% { opacity: 0.2; transform: skew(1deg, 0.2deg); }
+      74.2% { opacity: 0; transform: skew(0deg, 0deg); }
+    }
+    
     header {
       background-color: #0D0D0D;
       color: #00FF41;
@@ -66,6 +453,8 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      position: relative;
+      z-index: 10;
     }
     
     .menu-bar {
@@ -73,6 +462,8 @@
       padding: 5px 0;
       border-bottom: 1px solid rgba(0, 255, 65, 0.5);
       display: flex;
+      position: relative;
+      z-index: 10;
     }
     
     .menu-item {
@@ -119,21 +510,99 @@
       margin-left: 15px;
     }
     
-    main {
+    .editor-container {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+      position: relative;
+      z-index: 5;
+    }
+    
+    .file-explorer {
+      width: 240px;
+      background-color: #0D0D0D;
+      border-right: 1px solid rgba(0, 255, 65, 0.5);
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      transition: width 0.3s;
+    }
+    
+    .file-explorer.hidden {
+      width: 0;
+      border-right: 0;
+    }
+    
+    .file-explorer-header {
+      padding: 10px;
+      border-bottom: 1px solid rgba(0, 255, 65, 0.5);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .file-tree {
+      flex: 1;
+      padding: 10px;
+      overflow-y: auto;
+    }
+    
+    .tree-item {
+      padding: 5px 0 5px 5px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+    }
+    
+    .tree-item:hover {
+      background-color: rgba(0, 255, 65, 0.1);
+    }
+    
+    .tree-item.active {
+      background-color: rgba(0, 255, 65, 0.2);
+    }
+    
+    .tree-children {
+      margin-left: 15px;
+      border-left: 1px dotted rgba(0, 255, 65, 0.3);
+      padding-left: 5px;
+    }
+    
+    .tree-icon {
+      margin-right: 5px;
+    }
+    
+    .main-content {
       flex: 1;
       display: flex;
       flex-direction: column;
-      padding: 20px;
-      overflow: auto;
+      padding: 10px;
+      overflow: hidden;
     }
     
-    footer {
-      background-color: #0D0D0D;
-      padding: 5px 10px;
-      border-top: 1px solid rgba(0, 255, 65, 0.5);
-      font-family: monospace;
+    .editor-actions {
+      margin-bottom: 10px;
       display: flex;
       justify-content: space-between;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 5px;
+    }
+
+    .editor-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .editor-output-container {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
     }
     
     #editor {
@@ -144,14 +613,72 @@
       padding: 10px;
       font-family: 'Consolas', 'Courier New', monospace;
       font-size: 16px;
-      margin-bottom: 20px;
       resize: none;
+      overflow: auto;
     }
     
-    .buttons {
+    .output-container {
+      max-height: 200px;
+      height: 200px;
+      overflow-y: auto;
+      background-color: #000;
+      border: 1px solid rgba(0, 255, 65, 0.5);
+      margin-top: 10px;
+      padding: 10px;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 14px;
+      color: #00FF41;
+      display: none;
+    }
+
+    .output-header {
       display: flex;
-      gap: 10px;
-      margin-bottom: 10px;
+      justify-content: space-between;
+      align-items: center;
+      padding: 5px 10px;
+      background-color: rgba(0, 255, 65, 0.1);
+      border-bottom: 1px solid rgba(0, 255, 65, 0.2);
+    }
+
+    .output-content {
+      padding: 10px;
+      white-space: pre-wrap;
+    }
+
+    .clear-output-btn {
+      background: none;
+      border: none;
+      color: #00FF41;
+      cursor: pointer;
+      padding: 0;
+      font-size: 12px;
+      margin: 0;
+    }
+
+    .run-btn {
+      background-color: #006400;
+      color: #00FF41;
+      border: 1px solid #00FF41;
+      padding: 8px 15px;
+      font-family: monospace;
+      text-transform: uppercase;
+      cursor: pointer;
+      font-size: 14px;
+      margin-right: 5px;
+    }
+
+    .run-btn:hover {
+      background-color: #008000;
+      box-shadow: 0 0 8px rgba(0, 255, 65, 0.5);
+    }
+
+    footer {
+      background-color: #0D0D0D;
+      padding: 5px 10px;
+      border-top: 1px solid rgba(0, 255, 65, 0.5);
+      font-family: monospace;
+      display: flex;
+      justify-content: space-between;
     }
     
     button {
@@ -163,6 +690,7 @@
       text-transform: uppercase;
       cursor: pointer;
       font-size: 14px;
+      margin-right: 5px;
     }
     
     button:hover {
@@ -189,6 +717,189 @@
       100% {
         transform: translateY(100vh);
       }
+    }
+    
+    /* Theme options */
+    .theme-dark {
+      background-color: #1e1e1e;
+      color: #d4d4d4;
+    }
+
+    /* Multicolor themes */
+    .theme-synthwave {
+      background-color: #241b2f;
+      color: #ff7edb;
+      background-image: linear-gradient(
+        180deg, 
+        #241b2f 0%,
+        #2d1b42 25%,
+        #341b54 50%,
+        #2d1b42 75%,
+        #241b2f 100%
+      );
+    }
+    
+    .theme-synthwave #editor {
+      background-color: rgba(20, 12, 28, 0.7);
+      color: #ff7edb;
+      border-color: #ae46e6;
+      box-shadow: 0 0 12px rgba(174, 70, 230, 0.3);
+    }
+    
+    .theme-synthwave header, 
+    .theme-synthwave .menu-bar,
+    .theme-synthwave .file-explorer,
+    .theme-synthwave footer {
+      background-color: rgba(20, 12, 28, 0.85);
+      border-color: #ae46e6;
+      color: #ff7edb;
+    }
+    
+    .theme-synthwave button {
+      background-color: rgba(36, 27, 47, 0.7);
+      color: #ff7edb;
+      border-color: #ae46e6;
+    }
+    
+    .theme-synthwave button:hover {
+      background-color: rgba(56, 37, 77, 0.7);
+      box-shadow: 0 0 8px rgba(174, 70, 230, 0.5);
+    }
+
+    .theme-synthwave .run-btn {
+      background-color: rgba(41, 121, 255, 0.4);
+      color: #fcfcfc;
+      border-color: #ae46e6;
+    }
+    
+    .theme-synthwave .run-btn:hover {
+      background-color: rgba(41, 121, 255, 0.6);
+    }
+    
+    .theme-synthwave .menu-dropdown,
+    .theme-synthwave .menu-dropdown-item:hover {
+      background-color: rgba(20, 12, 28, 0.95);
+      border-color: #ae46e6;
+    }
+
+    .theme-synthwave .output-container {
+      background-color: rgba(20, 12, 28, 0.7);
+      color: #ff7edb;
+      border-color: #ae46e6;
+    }
+    
+    .theme-synthwave .output-header {
+      background-color: rgba(36, 27, 47, 0.8);
+      border-color: #ae46e6;
+    }
+    
+    .theme-cyberpunk {
+      background-color: #0d0221;
+      color: #0abdc6;
+      background-image: linear-gradient(
+        180deg, 
+        #0d0221 0%,
+        #091833 50%,
+        #0d0221 100%
+      );
+    }
+    
+    .theme-cyberpunk #editor {
+      background-color: rgba(9, 24, 51, 0.7);
+      color: #0abdc6;
+      border-color: #ea00d9;
+      box-shadow: 0 0 12px rgba(234, 0, 217, 0.3);
+    }
+    
+    .theme-cyberpunk header, 
+    .theme-cyberpunk .menu-bar,
+    .theme-cyberpunk .file-explorer,
+    .theme-cyberpunk footer {
+      background-color: rgba(9, 24, 51, 0.85);
+      border-color: #ea00d9;
+      color: #0abdc6;
+    }
+    
+    .theme-cyberpunk button {
+      background-color: rgba(13, 2, 33, 0.7);
+      color: #0abdc6;
+      border-color: #ea00d9;
+    }
+    
+    .theme-cyberpunk button:hover {
+      background-color: rgba(23, 12, 53, 0.7);
+      box-shadow: 0 0 8px rgba(234, 0, 217, 0.5);
+    }
+    
+    .theme-cyberpunk .run-btn {
+      background-color: rgba(255, 66, 0, 0.5);
+      color: #fffc00;
+      border-color: #ea00d9;
+    }
+    
+    .theme-cyberpunk .run-btn:hover {
+      background-color: rgba(255, 66, 0, 0.7);
+    }
+    
+    .theme-cyberpunk .menu-dropdown,
+    .theme-cyberpunk .menu-dropdown-item:hover {
+      background-color: rgba(9, 24, 51, 0.95);
+      border-color: #ea00d9;
+    }
+    
+    .theme-cyberpunk .output-container {
+      background-color: rgba(9, 24, 51, 0.7);
+      color: #0abdc6;
+      border-color: #ea00d9;
+    }
+    
+    .theme-cyberpunk .output-header {
+      background-color: rgba(13, 2, 33, 0.8);
+      border-color: #ea00d9;
+    }
+
+    .theme-glitch .crt-lens,
+    .theme-glitch .crt-flicker,
+    .theme-glitch .rgb-shift,
+    .theme-glitch .static-noise,
+    .theme-glitch .vhs-lines,
+    .theme-synthwave .crt-lens,
+    .theme-synthwave .crt-flicker,
+    .theme-synthwave .rgb-shift,
+    .theme-synthwave .static-noise,
+    .theme-synthwave .vhs-lines,
+    .theme-cyberpunk .crt-lens,
+    .theme-cyberpunk .crt-flicker,
+    .theme-cyberpunk .rgb-shift,
+    .theme-cyberpunk .static-noise,
+    .theme-cyberpunk .vhs-lines {
+      display: block;
+    }
+    
+    .theme-glitch .crt-overlay,
+    .theme-glitch .scan,
+    .theme-synthwave .crt-overlay,
+    .theme-synthwave .scan,
+    .theme-cyberpunk .crt-overlay,
+    .theme-cyberpunk .scan {
+      display: block;
+    }
+    
+    .theme-dark .crt-overlay,
+    .theme-dark .scan,
+    .theme-dark .crt-lens,
+    .theme-dark .crt-flicker,
+    .theme-dark .rgb-shift,
+    .theme-dark .static-noise,
+    .theme-dark .vhs-lines,
+    .theme-light .crt-overlay,
+    .theme-light .scan,
+    .theme-light .crt-lens,
+    .theme-light .crt-flicker,
+    .theme-light .rgb-shift,
+    .theme-light .static-noise,
+    .theme-light .vhs-lines {
+      display: none;
     }
     
     /* Modal styles */
@@ -235,67 +946,252 @@
       justify-content: flex-end;
       gap: 10px;
     }
+
+    /* Theme-specific modal styles */
+    .theme-dark .modal-content {
+      background-color: #252526;
+      border-color: #3e3e3e;
+    }
+
+    .theme-light .modal-content {
+      background-color: #ffffff;
+      border-color: #cccccc;
+    }
+
+    /* Theme-specific styles for output console */
+    .theme-dark .output-container {
+      background-color: #1e1e1e;
+      color: #d4d4d4;
+      border-color: #3e3e3e;
+    }
+
+    .theme-dark .output-header {
+      background-color: #252526;
+      border-color: #3e3e3e;
+    }
+
+    .theme-dark .clear-output-btn {
+      color: #d4d4d4;
+    }
+
+    .theme-dark .run-btn {
+      background-color: #0e639c;
+      color: #ffffff;
+      border-color: #3e3e3e;
+    }
+
+    .theme-dark .run-btn:hover {
+      background-color: #1177bb;
+    }
+
+    .theme-light .output-container {
+      background-color: #f5f5f5;
+      color: #333;
+      border-color: #cccccc;
+    }
+
+    .theme-light .output-header {
+      background-color: #e8e8e8;
+      border-color: #cccccc;
+    }
+
+    .theme-light .clear-output-btn {
+      color: #333;
+    }
+
+    .theme-light .run-btn {
+      background-color: #0066b8;
+      color: #ffffff;
+      border-color: #cccccc;
+    }
+
+    .theme-light .run-btn:hover {
+      background-color: #0077cc;
+    }
+    
+    /* Dark High-Contrast CRT Theme */
+    .theme-dark-crt {
+      background-color: #000000;
+      color: #FFFFFF;
+      position: relative;
+    }
+    
+    .theme-dark-crt .CodeMirror {
+      background-color: #000000 !important;
+      color: #FFFFFF;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+      text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+      font-family: 'Consolas', 'Courier New', monospace;
+      height: 100%;
+      position: relative;
+    }
+    
+    .theme-dark-crt .CodeMirror-gutters {
+      background-color: #0a0a0a !important;
+      border-right: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    .theme-dark-crt .CodeMirror-linenumber {
+      color: rgba(255, 255, 255, 0.7);
+      font-weight: bold;
+    }
+    
+    .theme-dark-crt .CodeMirror-cursor {
+      border-left: 2px solid #FFFFFF;
+      animation: blink 1s step-end infinite;
+      box-shadow: 0 0 5px rgba(255, 255, 255, 0.7);
+    }
+    
+    /* Lens distortion effect */
+    .theme-dark-crt:before {
+      content: '';
+      position: absolute;
+      top: -10%;
+      left: -10%;
+      right: -10%;
+      bottom: -10%;
+      border-radius: 30% / 10%;
+      background: transparent;
+      box-shadow: 0 0 30px rgba(255, 255, 255, 0.1) inset, 0 0 100px rgba(0, 0, 0, 0.7) inset;
+      z-index: 1;
+      pointer-events: none;
+    }
+    
+    .theme-dark-crt:after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(
+        to bottom,
+        transparent 50%,
+        rgba(0, 0, 0, 0.3) 50%
+      );
+      background-size: 100% 2px;
+      z-index: 2;
+      pointer-events: none;
+      opacity: 0.4;
+    }
+    
+    /* Scanline effect */
+    .theme-dark-crt .editor-container:after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.15),
+        rgba(0, 0, 0, 0.15) 1px,
+        transparent 1px,
+        transparent 2px
+      );
+      pointer-events: none;
+      z-index: 3;
+    }
+    
+    /* VHS tracking effect */
+    @keyframes tracking {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(2px); }
+    }
+    
+    .theme-dark-crt .tracking-line {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.1);
+      opacity: 0.7;
+      animation: tracking 10s linear infinite;
+      pointer-events: none;
+      z-index: 4;
+    }
+    
+    /* High contrast syntax highlighting for Dark CRT theme */
+    .theme-dark-crt .cm-keyword { color: #ffffff !important; font-weight: bold; }
+    .theme-dark-crt .cm-def { color: #ffffff !important; text-shadow: 0 0 5px rgba(255, 255, 255, 0.8); }
+    .theme-dark-crt .cm-string { color: #eeeeee !important; }
+    .theme-dark-crt .cm-comment { color: #cccccc !important; }
+    .theme-dark-crt .cm-operator { color: #ffffff !important; font-weight: bold; }
+    .theme-dark-crt .cm-number { color: #ffffff !important; }
+    .theme-dark-crt .cm-property { color: #ffffff !important; }
+    .theme-dark-crt .cm-variable { color: #ffffff !important; }
+    
+    /* ... existing code ... */
   </style>
 </head>
 <body>
-  <div class="offline-container">
-    <div class="crt-overlay"></div>
-    <div class="scan"></div>
-    
+  <div class="offline-container theme-glitch" id="app-container">
+    <div class="editor-header">
     <header>
-      <div>GLITCH.CRT_EDITOR</div>
-      <div id="clock">00:00:00</div>
+        <div>GLITCH.CRT_EDITOR <span id="version">[OFFLINE]</span></div>
+        <div id="status">READY</div>
     </header>
     
     <div class="menu-bar">
-      <div class="menu-item">
-        File
-        <div class="menu-dropdown">
-          <div class="menu-dropdown-item" id="menuNew">New <span class="shortcut">Ctrl+N</span></div>
-          <div class="menu-dropdown-item" id="menuOpen">Open <span class="shortcut">Ctrl+O</span></div>
-          <div class="menu-dropdown-item" id="menuSave">Save <span class="shortcut">Ctrl+S</span></div>
-          <div class="menu-dropdown-item" id="menuSaveAs">Save As <span class="shortcut">Ctrl+Shift+S</span></div>
-          <div class="menu-dropdown-item" id="menuQuit">Quit <span class="shortcut">Ctrl+Q</span></div>
+        <!-- Menu items here -->
+        <div class="menu-item">
+          View
+          <div class="menu-dropdown">
+            <div class="menu-dropdown-item" onclick="toggleFileTree()">Toggle File Tree <span>Ctrl+B</span></div>
         </div>
       </div>
-      <div class="menu-item">
-        Edit
-        <div class="menu-dropdown">
-          <div class="menu-dropdown-item" id="menuCut">Cut <span class="shortcut">Ctrl+X</span></div>
-          <div class="menu-dropdown-item" id="menuCopy">Copy <span class="shortcut">Ctrl+C</span></div>
-          <div class="menu-dropdown-item" id="menuPaste">Paste <span class="shortcut">Ctrl+V</span></div>
-          <div class="menu-dropdown-item" id="menuSelectAll">Select All <span class="shortcut">Ctrl+A</span></div>
+    
+    <div class="main-area">
+      <div id="file-explorer" class="file-explorer">
+        <div class="file-explorer-header">
+          <h3>Explorer</h3>
+          <button onclick="openFolder()">Open Folder</button>
         </div>
+        <div id="file-tree" class="file-tree">
+          <div class="tree-empty-state">No folder opened</div>
       </div>
-      <div class="menu-item">
-        View
-        <div class="menu-dropdown">
-          <div class="menu-dropdown-item" id="menuGlitchEffect">Toggle Glitch Effect</div>
-          <div class="menu-dropdown-item" id="menuScanline">Toggle Scanlines</div>
         </div>
+      
+      <div id="editor-container" class="editor-container">
+        <textarea id="editor"></textarea>
       </div>
-      <div class="menu-item">
-        Help
-        <div class="menu-dropdown">
-          <div class="menu-dropdown-item" id="menuAbout">About</div>
-          <div class="menu-dropdown-item" id="menuShortcuts">Keyboard Shortcuts</div>
         </div>
+    
+    <div id="terminal-container" class="terminal-container" style="display: none;">
+      <div class="terminal-header">
+        <span>Terminal</span>
+        <button onclick="toggleTerminal()" class="terminal-close">×</button>
+      </div>
+      <div id="terminal" class="terminal"></div>
+    </div>
+    
+    <div class="status-bar" id="status-bar">
+      <div class="status-left">
+        <span id="vim-mode-indicator" class="mode-indicator">EDIT</span>
+        <span id="cursor-position" class="status-item">Ln 1, Col 1</span>
+      </div>
+      <div class="status-right">
+        <span id="file-type" class="status-item file-type">Plain Text</span>
+        <span class="status-item time" id="clock">--:--:--</span>
       </div>
     </div>
     
-    <main>
-      <div class="buttons">
-        <button id="openBtn">Open File</button>
-        <button id="saveBtn">Save File</button>
-        <button id="newBtn">New File</button>
-      </div>
-      <textarea id="editor" placeholder="Type your code here..."></textarea>
-    </main>
-    
-    <footer>
-      <span>GLITCH.CRT_EDITOR v1.1.0</span>
-      <span id="status">STANDALONE MODE</span>
-    </footer>
+    <!-- CRT effects -->
+    <div class="crt-screen">
+      <div class="crt-frame"></div>
+      <div class="crt-scanlines"></div>
+      <div class="crt-curved-border"></div>
+      <div class="monitor-reflection"></div>
+      <div class="crt-lens"></div>
+      <div class="crt-flicker"></div>
+      <div class="rgb-shift"></div>
+      <div class="static-noise"></div>
+      <div class="vhs-lines"></div>
+      <div class="glitch-distort"></div>
+    </div>
   </div>
   
   <!-- About Modal -->
@@ -326,8 +1222,10 @@
       <div class="modal-body">
         <p><strong>Ctrl+N</strong> - New File</p>
         <p><strong>Ctrl+O</strong> - Open File</p>
+        <p><strong>Ctrl+K</strong> - Open Folder</p>
         <p><strong>Ctrl+S</strong> - Save File</p>
         <p><strong>Ctrl+Shift+S</strong> - Save As</p>
+        <p><strong>Ctrl+B</strong> - Toggle Sidebar</p>
         <p><strong>Ctrl+Q</strong> - Quit</p>
         <p><strong>Ctrl+X</strong> - Cut</p>
         <p><strong>Ctrl+C</strong> - Copy</p>
@@ -340,9 +1238,219 @@
     </div>
   </div>
   
+  <!-- CodeMirror Library and Dependencies -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/javascript-hint.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/html-hint.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/css-hint.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/xml-hint.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
+  
+  <!-- CodeMirror Language Modes -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/clike/clike.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/php/php.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/markdown/markdown.min.js"></script>
+  
   <script>
     // Current file path
     let currentFilePath = null;
+    let currentFolderPath = null;
+    let currentTheme = 'glitch';
+    let outputVisible = false;
+    let crtEffectsEnabled = true;
+    let editor = null;
+    
+    // Initialize CodeMirror editor
+    function initializeCodeMirror() {
+      const editorContainer = document.getElementById('code-editor-container');
+      
+      editor = CodeMirror(editorContainer, {
+        lineNumbers: true,
+        mode: 'javascript',
+        theme: 'monokai',
+        indentUnit: 2,
+        smartIndent: true,
+        tabSize: 2,
+        indentWithTabs: false,
+        electricChars: true,
+        autofocus: true,
+        matchBrackets: true,
+        autoCloseBrackets: true,
+        extraKeys: {
+          "Ctrl-Space": "autocomplete",
+          "Tab": function(cm) {
+            if (cm.somethingSelected()) {
+              cm.indentSelection("add");
+            } else {
+              cm.replaceSelection("  ", "end");
+            }
+          }
+        }
+      });
+      
+      // Apply theme styles to CodeMirror
+      applyThemeToCodeMirror(currentTheme);
+      
+      // Set up autocomplete on key events
+      editor.on("keyup", function(cm, event) {
+        // Don't autocomplete on backspace
+        if (event.keyCode === 8) return;
+        
+        // Trigger autocomplete on certain keypresses
+        if (!cm.state.completionActive && 
+            (event.keyCode > 64 && event.keyCode < 91) || // a-z
+            (event.keyCode > 96 && event.keyCode < 123) || // A-Z
+            event.keyCode === 46 || // .
+            event.keyCode === 95) { // _
+          CodeMirror.commands.autocomplete(cm, null, {completeSingle: false});
+        }
+      });
+    }
+    
+    // Apply theme to CodeMirror
+    function applyThemeToCodeMirror(theme) {
+      if (!editor) return;
+      
+      const editorElement = editor.getWrapperElement();
+      editorElement.classList.remove(
+        'theme-glitch', 
+        'theme-dark', 
+        'theme-light', 
+        'theme-synthwave', 
+        'theme-cyberpunk',
+        'theme-dark-crt'
+      );
+      
+      editorElement.classList.add('theme-' + theme);
+      
+      // Add tracking effect for CRT themes
+      if (theme === 'glitch' || theme === 'dark-crt') {
+        const trackingLine = document.querySelector('.tracking-line') || document.createElement('div');
+        trackingLine.className = 'tracking-line';
+        editorElement.appendChild(trackingLine);
+      } else {
+        const trackingLine = document.querySelector('.tracking-line');
+        if (trackingLine) {
+          trackingLine.remove();
+        }
+      }
+      
+      // Set editor theme based on current theme
+      switch(theme) {
+        case 'glitch':
+          editor.setOption('theme', 'monokai');
+          break;
+        case 'dark-crt':
+          editor.setOption('theme', 'monokai');
+          break;
+        case 'dark':
+          editor.setOption('theme', 'monokai');
+          break;
+        case 'light':
+          editor.setOption('theme', 'default');
+          break;
+        case 'synthwave':
+          editor.setOption('theme', 'monokai');
+          break;
+        case 'cyberpunk':
+          editor.setOption('theme', 'monokai');
+          break;
+        default:
+          editor.setOption('theme', 'default');
+      }
+      
+      // Apply lens distortion effects based on theme
+      const crtScreen = document.querySelector('.crt-screen');
+      const crtFrame = document.querySelector('.crt-frame');
+      const crtCurvedBorder = document.querySelector('.crt-curved-border');
+      
+      if (theme === 'glitch' || theme === 'synthwave' || theme === 'cyberpunk' || theme === 'dark-crt') {
+        crtScreen.style.display = glitchEffectsEnabled ? 'block' : 'none';
+        
+        // Adjust CRT effects based on theme
+        if (theme === 'glitch') {
+          crtFrame.style.boxShadow = '0 0 40px rgba(0, 255, 65, 0.3) inset, 0 0 100px rgba(0, 0, 0, 0.7) inset';
+          crtCurvedBorder.style.boxShadow = '0 0 20px rgba(0, 0, 0, 0.8) inset, 0 0 5px rgba(0, 255, 65, 0.2)';
+        } else if (theme === 'synthwave') {
+          crtFrame.style.boxShadow = '0 0 40px rgba(174, 70, 230, 0.3) inset, 0 0 100px rgba(0, 0, 0, 0.7) inset';
+          crtCurvedBorder.style.boxShadow = '0 0 20px rgba(0, 0, 0, 0.8) inset, 0 0 5px rgba(174, 70, 230, 0.2)';
+        } else if (theme === 'cyberpunk') {
+          crtFrame.style.boxShadow = '0 0 40px rgba(10, 189, 198, 0.3) inset, 0 0 100px rgba(0, 0, 0, 0.7) inset';
+          crtCurvedBorder.style.boxShadow = '0 0 20px rgba(0, 0, 0, 0.8) inset, 0 0 5px rgba(234, 0, 217, 0.2)';
+        } else if (theme === 'dark-crt') {
+          crtFrame.style.boxShadow = '0 0 40px rgba(150, 150, 150, 0.3) inset, 0 0 100px rgba(0, 0, 0, 0.7) inset';
+          crtCurvedBorder.style.boxShadow = '0 0 20px rgba(0, 0, 0, 0.8) inset, 0 0 5px rgba(150, 150, 150, 0.2)';
+        }
+      } else {
+        crtScreen.style.display = 'none';
+      }
+      
+      // Refresh to apply changes
+      editor.refresh();
+      
+      // Update status bar to reflect theme
+      const statusBar = document.getElementById('status-bar');
+      if (statusBar) {
+        statusBar.className = 'status-bar theme-' + theme;
+      }
+    }
+    
+    // Set file mode based on extension
+    function setEditorMode(filePath) {
+      if (!editor || !filePath) return;
+      
+      const extension = filePath.split('.').pop().toLowerCase();
+      let mode = 'javascript'; // default
+      
+      switch (extension) {
+        case 'js':
+          mode = 'javascript';
+          break;
+        case 'py':
+          mode = 'python';
+          break;
+        case 'html':
+        case 'htm':
+          mode = 'htmlmixed';
+          break;
+        case 'css':
+          mode = 'css';
+          break;
+        case 'php':
+          mode = 'php';
+          break;
+        case 'java':
+        case 'c':
+        case 'cpp':
+        case 'h':
+          mode = 'clike';
+          break;
+        case 'md':
+        case 'markdown':
+          mode = 'markdown';
+          break;
+        case 'xml':
+        case 'svg':
+          mode = 'xml';
+          break;
+      }
+      
+      editor.setOption('mode', mode);
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      initializeCodeMirror();
+      updateClock();
+      setInterval(updateClock, 1000);
+    });
     
     // Update clock
     function updateClock() {
@@ -351,19 +1459,16 @@
       document.getElementById('clock').textContent = time;
     }
     
-    setInterval(updateClock, 1000);
-    updateClock();
-    
     // File operations
     function newFile() {
-      if (document.getElementById('editor').value.trim() !== '') {
+      if (editor && editor.getValue().trim() !== '') {
         if (confirm('Create a new file? Unsaved changes will be lost.')) {
-          document.getElementById('editor').value = '';
+          editor.setValue('');
           document.getElementById('status').textContent = 'NEW FILE';
           currentFilePath = null;
         }
-      } else {
-        document.getElementById('editor').value = '';
+      } else if (editor) {
+        editor.setValue('');
         document.getElementById('status').textContent = 'NEW FILE';
         currentFilePath = null;
       }
@@ -371,21 +1476,116 @@
     
     function openFile() {
       window.electron.ipcRenderer.invoke('open-file-dialog').then(result => {
-        if (result && result.content) {
-          document.getElementById('editor').value = result.content;
+        if (result && result.content && editor) {
+          editor.setValue(result.content);
           document.getElementById('status').textContent = 'FILE: ' + result.filePath.split(/[\/\\]/).pop();
           currentFilePath = result.filePath;
+          setEditorMode(result.filePath);
         }
       }).catch(err => {
         console.error('Failed to open file:', err);
       });
     }
     
+    function openFolder() {
+      window.electron.ipcRenderer.invoke('open-folder-dialog').then(result => {
+        if (result && result.folderPath) {
+          currentFolderPath = result.folderPath;
+          document.getElementById('status').textContent = 'FOLDER: ' + result.folderPath.split(/[\/\\]/).pop();
+          loadFolderTree(result.folderPath);
+        }
+      }).catch(err => {
+        console.error('Failed to open folder:', err);
+      });
+    }
+    
+    function loadFolderTree(folderPath) {
+      window.electron.ipcRenderer.invoke('open-folder', folderPath).then(result => {
+        if (result && result.tree) {
+          renderFileTree(result.tree);
+        } else if (result && result.error) {
+          console.error('Error loading folder:', result.error);
+        }
+      }).catch(err => {
+        console.error('Failed to load folder tree:', err);
+      });
+    }
+    
+    function renderFileTree(tree) {
+      const treeElement = document.getElementById('file-tree');
+      treeElement.innerHTML = '';
+      
+      if (!tree || tree.length === 0) {
+        treeElement.innerHTML = '<div class="tree-item">Empty folder</div>';
+        return;
+      }
+      
+      function createTreeItem(item) {
+        const itemElement = document.createElement('div');
+        itemElement.className = 'tree-item';
+        
+        const iconElement = document.createElement('span');
+        iconElement.className = 'tree-icon';
+        iconElement.textContent = item.type === 'directory' ? '📁' : '📄';
+        itemElement.appendChild(iconElement);
+        
+        const nameElement = document.createElement('span');
+        nameElement.textContent = item.name;
+        itemElement.appendChild(nameElement);
+        
+        if (item.type === 'file') {
+          itemElement.addEventListener('click', () => {
+            window.electron.ipcRenderer.invoke('read-file', { filePath: item.path }).then(result => {
+              if (result && result.content) {
+                editor.setValue(result.content);
+                document.getElementById('status').textContent = 'FILE: ' + item.name;
+                currentFilePath = item.path;
+                setEditorMode(item.path);
+              } else if (result && result.error) {
+                console.error('Error reading file:', result.error);
+              }
+            }).catch(err => {
+              console.error('Failed to read file:', err);
+            });
+          });
+        } else if (item.children && item.children.length > 0) {
+          // It's a directory with children
+          const childrenContainer = document.createElement('div');
+          childrenContainer.className = 'tree-children';
+          childrenContainer.style.display = 'none'; // Initially hidden
+          
+          item.children.forEach(child => {
+            const childElement = createTreeItem(child);
+            childrenContainer.appendChild(childElement);
+          });
+          
+          // Toggle children display when clicking on a directory
+          itemElement.addEventListener('click', (e) => {
+            e.stopPropagation();
+            childrenContainer.style.display = childrenContainer.style.display === 'none' ? 'block' : 'none';
+          });
+          
+          const container = document.createElement('div');
+          container.appendChild(itemElement);
+          container.appendChild(childrenContainer);
+          return container;
+        }
+        
+        return itemElement;
+      }
+      
+      tree.forEach(item => {
+        treeElement.appendChild(createTreeItem(item));
+      });
+    }
+    
     function saveFile() {
+      if (!editor) return;
+      
       if (currentFilePath) {
         window.electron.ipcRenderer.invoke('save-file', { 
           filePath: currentFilePath,
-          content: document.getElementById('editor').value 
+          content: editor.getValue() 
         }).then(result => {
           if (result && result.success) {
             document.getElementById('status').textContent = 'SAVED: ' + currentFilePath.split(/[\/\\]/).pop();
@@ -400,115 +1600,580 @@
     }
     
     function saveFileAs() {
+      if (!editor) return;
+      
       window.electron.ipcRenderer.invoke('save-file-dialog', {
-        content: document.getElementById('editor').value
+        content: editor.getValue()
       }).then(result => {
         if (result && result.success) {
           currentFilePath = result.filePath;
           document.getElementById('status').textContent = 'SAVED: ' + result.filePath.split(/[\/\\]/).pop();
+          setEditorMode(result.filePath);
         }
       }).catch(err => {
         console.error('Failed to save file:', err);
       });
     }
     
+    // Run current file
+    function runFile() {
+      if (!editor) return;
+      
+      const outputContent = document.getElementById('outputContent');
+      const outputContainer = document.getElementById('outputContainer');
+      const content = editor.getValue();
+      const extension = currentFilePath ? currentFilePath.split('.').pop().toLowerCase() : null;
+
+      // Make output visible
+      outputContainer.style.display = 'block';
+      outputVisible = true;
+      
+      // Clear previous output
+      outputContent.innerHTML = '';
+      
+      // Add timestamp
+      const timestamp = new Date().toLocaleTimeString();
+      outputContent.innerHTML += `<div style="color:#888">[${timestamp}] Running ${currentFilePath || 'unsaved file'}...</div>\n`;
+      
+      try {
+        // Basic execution based on file type
+        if (['js', 'javascript'].includes(extension) || !extension) {
+          // Create a sandbox for JavaScript execution
+          const originalConsoleLog = console.log;
+          const originalConsoleError = console.error;
+          const originalConsoleWarn = console.warn;
+          
+          // Override console methods to capture output
+          console.log = (...args) => {
+            outputContent.innerHTML += `<div>${args.join(' ')}</div>\n`;
+            outputContent.scrollTop = outputContent.scrollHeight;
+            originalConsoleLog(...args);
+          };
+          
+          console.error = (...args) => {
+            outputContent.innerHTML += `<div style="color:#ff3333">${args.join(' ')}</div>\n`;
+            outputContent.scrollTop = outputContent.scrollHeight;
+            originalConsoleError(...args);
+          };
+          
+          console.warn = (...args) => {
+            outputContent.innerHTML += `<div style="color:#ffaa33">${args.join(' ')}</div>\n`;
+            outputContent.scrollTop = outputContent.scrollHeight;
+            originalConsoleWarn(...args);
+          };
+          
+          try {
+            // Execute the code
+            const result = new Function(content)();
+            if (result !== undefined) {
+              console.log(result);
+            }
+          } catch (error) {
+            console.error(error.toString());
+          }
+          
+          // Restore console methods
+          console.log = originalConsoleLog;
+          console.error = originalConsoleError;
+          console.warn = originalConsoleWarn;
+        } else if (['html', 'htm'].includes(extension)) {
+          // For HTML files, create an iframe
+          outputContent.innerHTML = '<iframe id="htmlPreview" style="width:100%; border:none; height:100%;"></iframe>';
+          const iframe = document.getElementById('htmlPreview');
+          iframe.contentWindow.document.open();
+          iframe.contentWindow.document.write(content);
+          iframe.contentWindow.document.close();
+        } else {
+          outputContent.innerHTML += `<div style="color:#ff3333">Cannot execute files with .${extension} extension. Only JavaScript and HTML are supported in offline mode.</div>`;
+        }
+      } catch (error) {
+        outputContent.innerHTML += `<div style="color:#ff3333">Runtime Error: ${error.toString()}</div>`;
+      }
+      
+      // Scroll to bottom
+      outputContent.scrollTop = outputContent.scrollHeight;
+    }
+    
+    // Run online mode
+    function runOnlineMode() {
+      if (window.electron) {
+        window.electron.ipcRenderer.send('launch-online-mode');
+      } else if (window.location.pathname.includes('standalone.html')) {
+        window.location.href = window.location.origin + '/index.html';
+      }
+    }
+    
+    function toggleOutput() {
+      const outputContainer = document.getElementById('outputContainer');
+      outputVisible = !outputVisible;
+      outputContainer.style.display = outputVisible ? 'block' : 'none';
+    }
+    
+    function clearOutput() {
+      const outputContent = document.getElementById('outputContent');
+      outputContent.innerHTML = '';
+    }
+    
+    // Theme functions
+    function setTheme(theme) {
+      // Update CodeMirror theme
+      applyThemeToCodeMirror(theme);
+      
+      // Update UI elements to match the theme
+      const body = document.body;
+      body.className = `theme-${theme}`;
+      
+      // Save preference
+      const settings = JSON.parse(localStorage.getItem('editor-settings') || '{}');
+      settings.theme = theme;
+      localStorage.setItem('editor-settings', JSON.stringify(settings));
+      
+      showNotification(`Theme set to ${theme}`);
+    }
+    
+    let glitchEffectsEnabled = true;
+    function toggleGlitchEffects() {
+      glitchEffectsEnabled = !glitchEffectsEnabled;
+      
+      // Toggle CRT screen effects
+      const crtEffects = document.querySelectorAll('.crt-screen, .crt-scanlines, .crt-lens, .crt-flicker, .rgb-shift, .static-noise, .vhs-lines, .glitch-distort');
+      crtEffects.forEach(effect => {
+        effect.style.display = glitchEffectsEnabled ? 'block' : 'none';
+      });
+      
+      // Update status indicator
+      const statusEl = document.getElementById('glitch-effects-status');
+      if (statusEl) {
+        statusEl.textContent = glitchEffectsEnabled ? 'ON' : 'OFF';
+      }
+      
+      // Save preference
+      const settings = JSON.parse(localStorage.getItem('editor-settings') || '{}');
+      settings.glitchEffects = glitchEffectsEnabled;
+      localStorage.setItem('editor-settings', JSON.stringify(settings));
+      
+      showNotification(`Glitch effects ${glitchEffectsEnabled ? 'enabled' : 'disabled'}`);
+    }
+    
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+          showNotification(`Error entering fullscreen: ${err.message}`, 'error');
+        });
+      } else {
+        document.exitFullscreen();
+      }
+    }
+    
+    function showShortcuts() {
+      // Create a modal with keyboard shortcuts
+      const modal = document.createElement('div');
+      modal.className = 'modal';
+      modal.innerHTML = `
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>Keyboard Shortcuts</h2>
+            <span class="modal-close">&times;</span>
+          </div>
+          <div class="modal-body">
+            <table>
+              <tr>
+                <th>Action</th>
+                <th>Shortcut</th>
+              </tr>
+              <tr>
+                <td>New File</td>
+                <td>Ctrl+N</td>
+              </tr>
+              <tr>
+                <td>Open File</td>
+                <td>Ctrl+O</td>
+              </tr>
+              <tr>
+                <td>Save File</td>
+                <td>Ctrl+S</td>
+              </tr>
+              <tr>
+                <td>Cut</td>
+                <td>Ctrl+X</td>
+              </tr>
+              <tr>
+                <td>Copy</td>
+                <td>Ctrl+C</td>
+              </tr>
+              <tr>
+                <td>Paste</td>
+                <td>Ctrl+V</td>
+              </tr>
+              <tr>
+                <td>Toggle Terminal</td>
+                <td>Ctrl+\`</td>
+              </tr>
+              <tr>
+                <td>Toggle File Tree</td>
+                <td>Ctrl+B</td>
+              </tr>
+              <tr>
+                <td>Toggle Vim Mode</td>
+                <td>Alt+V</td>
+              </tr>
+              <tr>
+                <td>Toggle Fullscreen</td>
+                <td>F11</td>
+              </tr>
+              <tr>
+                <td>Show Autocomplete</td>
+                <td>Ctrl+Space</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+      
+      // Close modal when clicking X or outside the modal
+      const closeBtn = modal.querySelector('.modal-close');
+      closeBtn.addEventListener('click', () => {
+        document.body.removeChild(modal);
+      });
+      
+      modal.addEventListener('click', (event) => {
+        if (event.target === modal) {
+          document.body.removeChild(modal);
+        }
+      });
+    }
+    
+    function showAbout() {
+      // Create a modal with about information
+      const modal = document.createElement('div');
+      modal.className = 'modal';
+      modal.innerHTML = `
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>About GLITCH.CRT_EDITOR</h2>
+            <span class="modal-close">&times;</span>
+          </div>
+          <div class="modal-body">
+            <p>GLITCH.CRT_EDITOR is a retro-style code editor with CRT display effects.</p>
+            <p>Version: 1.2.0</p>
+            <p>Features:</p>
+            <ul>
+              <li>Multiple retro CRT themes</li>
+              <li>Vim mode support</li>
+              <li>File tree navigation</li>
+              <li>Terminal emulation</li>
+              <li>Code execution</li>
+              <li>Syntax highlighting</li>
+              <li>Autocompletion</li>
+            </ul>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+      
+      // Close modal when clicking X or outside the modal
+      const closeBtn = modal.querySelector('.modal-close');
+      closeBtn.addEventListener('click', () => {
+        document.body.removeChild(modal);
+      });
+      
+      modal.addEventListener('click', (event) => {
+        if (event.target === modal) {
+          document.body.removeChild(modal);
+        }
+      });
+    }
+    
+    // Load settings on startup
+    function loadSettings() {
+      const settings = JSON.parse(localStorage.getItem('editor-settings') || '{}');
+      
+      // Apply theme
+      if (settings.theme) {
+        setTheme(settings.theme);
+      } else {
+        setTheme('glitch'); // Default theme
+      }
+      
+      // Apply Vim mode
+      if (settings.vimMode) {
+        vimModeEnabled = true;
+        if (document.getElementById('vim-mode-indicator')) {
+          document.getElementById('vim-mode-indicator').textContent = 'VIM';
+        }
+      }
+      
+      // Apply file tree visibility
+      if (settings.showFileTree === false) {
+        const fileTree = document.getElementById('file-explorer');
+        const editorContainer = document.getElementById('editor-container');
+        if (fileTree && editorContainer) {
+          fileTree.style.display = 'none';
+          editorContainer.style.marginLeft = '0';
+        }
+      }
+      
+      // Apply terminal visibility
+      if (settings.showTerminal) {
+        const terminal = document.getElementById('terminal-container');
+        if (terminal) {
+          terminal.style.display = 'block';
+        }
+      }
+      
+      // Apply glitch effects
+      if (settings.glitchEffects === false) {
+        glitchEffectsEnabled = false;
+        toggleGlitchEffects();
+      }
+    }
+    
+    // Call loadSettings after the editor is initialized
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(loadSettings, 100);
+    });
+    
+    function toggleSidebar() {
+      const explorer = document.getElementById('file-explorer');
+      explorer.classList.toggle('hidden');
+    }
+    
     // Button event handlers
     document.getElementById('newBtn').addEventListener('click', newFile);
     document.getElementById('openBtn').addEventListener('click', openFile);
     document.getElementById('saveBtn').addEventListener('click', saveFile);
+    document.getElementById('openFolderBtn').addEventListener('click', openFolder);
+    document.getElementById('runBtn').addEventListener('click', runFile);
+    document.getElementById('toggleOutputBtn').addEventListener('click', toggleOutput);
+    document.getElementById('clearOutputBtn').addEventListener('click', clearOutput);
+    document.getElementById('runOnlineBtn').addEventListener('click', runOnlineMode);
     
     // Menu event handlers
     document.getElementById('menuNew').addEventListener('click', newFile);
     document.getElementById('menuOpen').addEventListener('click', openFile);
+    document.getElementById('menuOpenFolder').addEventListener('click', openFolder);
     document.getElementById('menuSave').addEventListener('click', saveFile);
     document.getElementById('menuSaveAs').addEventListener('click', saveFileAs);
-    document.getElementById('menuQuit').addEventListener('click', () => {
-      if (document.getElementById('editor').value.trim() !== '' && !confirm('Quit? Unsaved changes will be lost.')) {
-        return;
+    document.getElementById('menuRun').addEventListener('click', runFile);
+    document.getElementById('menuToggleOutput').addEventListener('click', toggleOutput);
+    document.getElementById('menuClearOutput').addEventListener('click', clearOutput);
+    document.getElementById('menuRunOnline').addEventListener('click', runOnlineMode);
+    document.getElementById('menuShowAutoComplete').addEventListener('click', () => {
+      if (editor) {
+        CodeMirror.commands.autocomplete(editor, null, {completeSingle: false});
       }
-      window.electron.ipcRenderer.invoke('quit-app');
     });
-    
-    // Edit menu handlers
-    document.getElementById('menuCut').addEventListener('click', () => {
-      document.execCommand('cut');
-    });
-    
-    document.getElementById('menuCopy').addEventListener('click', () => {
-      document.execCommand('copy');
-    });
-    
-    document.getElementById('menuPaste').addEventListener('click', () => {
-      document.execCommand('paste');
-    });
-    
-    document.getElementById('menuSelectAll').addEventListener('click', () => {
-      document.getElementById('editor').select();
-    });
-    
-    // View menu handlers
-    document.getElementById('menuGlitchEffect').addEventListener('click', () => {
-      document.querySelector('.crt-overlay').style.display = 
-        document.querySelector('.crt-overlay').style.display === 'none' ? 'block' : 'none';
-    });
-    
-    document.getElementById('menuScanline').addEventListener('click', () => {
-      document.querySelector('.scan').style.display = 
-        document.querySelector('.scan').style.display === 'none' ? 'block' : 'none';
-    });
-    
-    // Help menu handlers
-    document.getElementById('menuAbout').addEventListener('click', () => {
-      document.getElementById('aboutModal').style.display = 'block';
-    });
-    
-    document.getElementById('menuShortcuts').addEventListener('click', () => {
-      document.getElementById('shortcutsModal').style.display = 'block';
-    });
-    
-    // Modal handlers
-    document.querySelectorAll('.close-btn, .close-modal').forEach(elem => {
-      elem.addEventListener('click', () => {
-        const modalId = elem.dataset.modal;
-        document.getElementById(modalId).style.display = 'none';
-      });
-    });
-    
-    // Global keyboard shortcuts
-    document.addEventListener('keydown', e => {
-      // Ctrl+N - New File
-      if (e.ctrlKey && e.key === 'n') {
-        e.preventDefault();
-        newFile();
-      }
-      
-      // Ctrl+O - Open File
-      if (e.ctrlKey && e.key === 'o') {
-        e.preventDefault();
-        openFile();
-      }
-      
-      // Ctrl+S - Save File
-      if (e.ctrlKey && e.key === 's' && !e.shiftKey) {
-        e.preventDefault();
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', function(event) {
+      // Save: Ctrl+S
+      if (event.ctrlKey && event.key === 's') {
+        event.preventDefault();
         saveFile();
       }
       
-      // Ctrl+Shift+S - Save As
-      if (e.ctrlKey && e.shiftKey && e.key === 'S') {
-        e.preventDefault();
-        saveFileAs();
+      // Open: Ctrl+O
+      if (event.ctrlKey && event.key === 'o') {
+        event.preventDefault();
+        openFile();
       }
       
-      // Ctrl+Q - Quit
-      if (e.ctrlKey && e.key === 'q') {
-        e.preventDefault();
-        if (document.getElementById('editor').value.trim() !== '' && !confirm('Quit? Unsaved changes will be lost.')) {
+      // New: Ctrl+N
+      if (event.ctrlKey && event.key === 'n') {
+        event.preventDefault();
+        newFile();
+      }
+      
+      // Toggle terminal: Ctrl+`
+      if (event.ctrlKey && event.key === '`') {
+        event.preventDefault();
+        toggleTerminal();
+      }
+      
+      // Toggle file tree: Ctrl+B
+      if (event.ctrlKey && event.key === 'b') {
+        event.preventDefault();
+        toggleFileTree();
+      }
+      
+      // Toggle Vim mode: Alt+V
+      if (event.altKey && event.key === 'v') {
+        event.preventDefault();
+        toggleVimMode();
+      }
+      
+      // Copy: Ctrl+C (Override default to ensure it works in the editor)
+      if (event.ctrlKey && event.key === 'c' && editor) {
+        if (!editor.somethingSelected()) {
+          // If nothing is selected, let the default copy behavior work
           return;
         }
-        window.electron.ipcRenderer.invoke('quit-app');
+        event.preventDefault();
+        document.execCommand('copy'); // Use the browser's copy command
+        // Show feedback
+        showNotification('Copied to clipboard');
+      }
+      
+      // Paste: Ctrl+V (Override default to handle formatting)
+      if (event.ctrlKey && event.key === 'v' && editor) {
+        event.preventDefault();
+        // Use the clipboard API to get clipboard content
+        navigator.clipboard.readText()
+          .then(text => {
+            // Insert at current cursor position
+            editor.replaceSelection(text);
+            showNotification('Pasted from clipboard');
+          })
+          .catch(err => {
+            console.error('Failed to read clipboard:', err);
+            showNotification('Failed to paste: ' + err.message, 'error');
+          });
+      }
+      
+      // Cut: Ctrl+X
+      if (event.ctrlKey && event.key === 'x' && editor) {
+        if (!editor.somethingSelected()) {
+          return;
+        }
+        event.preventDefault();
+        document.execCommand('cut');
+        showNotification('Cut to clipboard');
       }
     });
+    
+    function toggleTerminal() {
+      const terminal = document.getElementById('terminal-container');
+      if (terminal.style.display === 'none' || terminal.style.display === '') {
+        terminal.style.display = 'block';
+        if (terminalInstance) {
+          setTimeout(() => terminalInstance.focus(), 100);
+        }
+      } else {
+        terminal.style.display = 'none';
+      }
+      // Save preference
+      const settings = JSON.parse(localStorage.getItem('editor-settings') || '{}');
+      settings.showTerminal = terminal.style.display === 'block';
+      localStorage.setItem('editor-settings', JSON.stringify(settings));
+    }
+    
+    function toggleFileTree() {
+      const fileTree = document.getElementById('file-explorer');
+      const editorContainer = document.getElementById('editor-container');
+      
+      if (fileTree.style.display === 'none' || fileTree.style.display === '') {
+        fileTree.style.display = 'block';
+        editorContainer.style.marginLeft = '250px';
+      } else {
+        fileTree.style.display = 'none';
+        editorContainer.style.marginLeft = '0';
+      }
+      
+      // Force CodeMirror to refresh its layout
+      if (editor) {
+        setTimeout(() => editor.refresh(), 100);
+      }
+      
+      // Save preference
+      const settings = JSON.parse(localStorage.getItem('editor-settings') || '{}');
+      settings.showFileTree = fileTree.style.display === 'block';
+      localStorage.setItem('editor-settings', JSON.stringify(settings));
+    }
+    
+    let vimModeEnabled = false;
+    function toggleVimMode() {
+      vimModeEnabled = !vimModeEnabled;
+      
+      // We need to recreate the editor with Vim mode enabled/disabled
+      if (editor) {
+        const content = editor.getValue();
+        const historySize = editor.getHistory();
+        const scrollInfo = editor.getScrollInfo();
+        const cursorPos = editor.getCursor();
+        
+        // Get current editor options to preserve them
+        const currentOptions = {
+          mode: editor.getOption('mode'),
+          theme: editor.getOption('theme'),
+          lineNumbers: editor.getOption('lineNumbers'),
+          lineWrapping: editor.getOption('lineWrapping'),
+          indentUnit: editor.getOption('indentUnit')
+        };
+        
+        // Clear existing editor
+        const editorElement = document.getElementById('editor');
+        editor.toTextArea();
+        
+        // Set up options with or without Vim mode
+        const editorOptions = {
+          ...currentOptions,
+          keyMap: vimModeEnabled ? 'vim' : 'default',
+          extraKeys: {
+            'Ctrl-S': function() { saveFile(); }
+          }
+        };
+        
+        // Create new editor with updated options
+        editor = CodeMirror.fromTextArea(editorElement, editorOptions);
+        editor.setValue(content);
+        editor.scrollTo(scrollInfo.left, scrollInfo.top);
+        editor.setCursor(cursorPos);
+        
+        try {
+          editor.setHistory(historySize);
+        } catch (e) {
+          console.error('Could not restore editor history:', e);
+        }
+        
+        // Show feedback to user
+        showNotification(vimModeEnabled ? 'Vim mode enabled' : 'Vim mode disabled');
+        
+        // Update mode indicator
+        document.getElementById('vim-mode-indicator').textContent = vimModeEnabled ? 'VIM' : 'EDIT';
+        
+        // Save preference
+        const settings = JSON.parse(localStorage.getItem('editor-settings') || '{}');
+        settings.vimMode = vimModeEnabled;
+        localStorage.setItem('editor-settings', JSON.stringify(settings));
+      }
+    }
+    
+    function showNotification(message, type = 'info') {
+      const notification = document.createElement('div');
+      notification.className = `notification ${type}`;
+      notification.textContent = message;
+      
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.classList.add('show');
+        
+        setTimeout(() => {
+          notification.classList.remove('show');
+          setTimeout(() => {
+            document.body.removeChild(notification);
+          }, 300); // Wait for fade out animation
+        }, 2000);
+      }, 10);
+    }
+    
+    function cycleThemes() {
+      const themes = ['glitch', 'dark-crt', 'dark', 'light', 'synthwave', 'cyberpunk'];
+      
+      // Get current theme from settings
+      const settings = JSON.parse(localStorage.getItem('editor-settings') || '{}');
+      const currentTheme = settings.theme || 'glitch';
+      
+      // Find current theme index and get next one
+      let currentIndex = themes.indexOf(currentTheme);
+      if (currentIndex === -1) currentIndex = 0;
+      
+      const nextTheme = themes[(currentIndex + 1) % themes.length];
+      
+      // Apply the new theme
+      setTheme(nextTheme);
+    }
   </script>
 </body>
 </html> 

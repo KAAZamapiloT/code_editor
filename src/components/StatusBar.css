@@ -1,44 +1,96 @@
 .status-bar {
-  background-color: var(--status-bar-bg, #007acc);
-  color: var(--status-bar-text, #ffffff);
   display: flex;
-  justify-content: flex-start;
-  padding: 4px 10px;
+  align-items: center;
+  background-color: var(--status-bar-bg, #24292e);
+  color: var(--status-bar-text, #eee);
   font-size: 12px;
-  border-top: 1px solid var(--border-color);
-  user-select: none;
+  padding: 0 10px;
+  height: 25px;
+  border-top: 1px solid var(--border-color, #333);
 }
 
 .status-item {
-  margin-right: 15px;
+  padding: 0 8px;
   display: flex;
   align-items: center;
 }
 
-.status-item:last-child {
-  margin-right: 0;
+.status-item:not(:last-child) {
+  border-right: 1px solid var(--border-color, #444);
 }
 
-.mode-indicator {
+.status-bar .mode-indicator {
   padding: 2px 6px;
   border-radius: 3px;
   font-weight: bold;
-  background-color: rgba(255, 255, 255, 0.1);
+  text-transform: uppercase;
+  font-size: 10px;
 }
 
-.mode-indicator.normal {
-  background-color: #2196F3;
-  color: white;
+.status-bar .mode-indicator.normal {
+  background-color: #2c6e49;
+  color: #fff;
 }
 
-.mode-indicator.insert {
-  background-color: #4CAF50;
-  color: white;
+.status-bar .mode-indicator.insert {
+  background-color: #1a759f;
+  color: #fff;
 }
 
-.mode-indicator.visual {
-  background-color: #FF9800;
+.status-bar .mode-indicator.visual {
+  background-color: #774936;
+  color: #fff;
+}
+
+.status-item.offline-indicator {
+  color: #ff6b6b;
+  font-weight: bold;
+}
+
+.status-item.run-online {
+  padding: 0 5px;
+}
+
+.run-online-btn {
+  background-color: #005eff;
   color: white;
+  border: none;
+  border-radius: 3px;
+  padding: 2px 8px;
+  font-size: 10px;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+
+.run-online-btn:hover {
+  background-color: #0046bd;
+}
+
+.glitch-text .run-online-btn {
+  background-color: #006400;
+  color: #00FF41;
+  border: 1px solid #00FF41;
+}
+
+.glitch-text .run-online-btn:hover {
+  background-color: #008000;
+  box-shadow: 0 0 8px rgba(0, 255, 65, 0.5);
+}
+
+.crt-text .run-online-btn {
+  background-color: #333;
+  color: #0f0;
+  border: 1px solid #0f0;
+}
+
+.crt-text .run-online-btn:hover {
+  background-color: #444;
+  box-shadow: 0 0 8px rgba(0, 255, 0, 0.5);
+}
+
+.status-item.dirty-indicator {
+  color: #ff6b6b;
+  font-weight: bold;
 }
 
 .status-item.file-type {

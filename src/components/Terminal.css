@@ -1,0 +1,121 @@
+/* Terminal container */
+.terminal-wrapper {
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+  background-color: #000;
+  border-top: 1px solid rgba(0, 255, 65, 0.5);
+}
+
+.dark-crt-theme .terminal-wrapper {
+  background-color: #000000;
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Terminal header */
+.terminal-header {
+  padding: 5px 10px;
+  background-color: #0a0a0a;
+  border-bottom: 1px solid rgba(0, 255, 65, 0.3);
+  color: #00FF41;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dark-crt-theme .terminal-header {
+  background-color: #0a0a0a;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+}
+
+.terminal-title {
+  font-weight: bold;
+}
+
+.terminal-actions {
+  display: flex;
+}
+
+.terminal-close {
+  background: none;
+  border: none;
+  color: #00FF41;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.dark-crt-theme .terminal-close {
+  color: #ffffff;
+}
+
+.terminal-close:hover {
+  color: #FF3232;
+}
+
+/* Terminal content */
+.terminal-container {
+  flex-grow: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Xterm.js specific styles */
+.xterm {
+  height: 100%;
+  font-family: 'Courier New', monospace;
+}
+
+.dark-crt-theme .xterm .xterm-viewport,
+.dark-crt-theme .xterm .xterm-screen {
+  background-color: #000000 !important;
+}
+
+.dark-crt-theme .xterm .xterm-text-layer {
+  color: #ffffff !important;
+  text-shadow: 0 0 3px rgba(255, 255, 255, 0.5);
+}
+
+.dark-crt-theme .xterm .xterm-cursor {
+  background-color: #ffffff !important;
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.7);
+}
+
+/* Scanlines overlay for the terminal */
+.dark-crt-theme .terminal-container::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.15),
+    rgba(0, 0, 0, 0.15) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  pointer-events: none;
+  z-index: 10;
+  opacity: 0.5;
+}
+
+/* Lens distortion for the terminal */
+.dark-crt-theme .terminal-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(0, 0, 0, 0.2) 100%
+  );
+  pointer-events: none;
+  z-index: 9;
+  opacity: 0.7;
+} 

@@ -17,6 +17,7 @@
     "postinstall": "electron-builder install-app-deps"
   },
   "dependencies": {
+    "@codemirror/autocomplete": "^6.18.6",
     "@codemirror/lang-cpp": "^6.0.2",
     "@codemirror/lang-css": "^6.2.1",
     "@codemirror/lang-html": "^6.4.6",

@@ -43,6 +43,17 @@ export const StatusBar = ({ mode, filePath, cursorPosition, lineCount, isDirty, 
     return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
   }
 
+  const handleRunOnlineClick = () => {
+    // In standalone mode, this will navigate to the main app URL
+    if (window.location.pathname.includes('standalone.html') || window.location.pathname.includes('offline.html')) {
+      window.location.href = window.location.origin + '/index.html';
+    } 
+    // In case we're in a compiled app but offline, try to reconnect or switch to online mode
+    else if (window.electron) {
+      window.electron.ipcRenderer.send('launch-online-mode');
+    }
+  };
+
   return (
     <div className={`status-bar ${isGlitch ? 'glitch-text' : isCRT ? 'crt-text' : ''}`}>
       <div className="status-item mode">
@@ -58,9 +69,16 @@ export const StatusBar = ({ mode, filePath, cursorPosition, lineCount, isDirty, 
         {lineCount} lines
       </div>
       {isOffline && (
-        <div className="status-item offline-indicator">
-          OFFLINE
-        </div>
+        <>
+          <div className="status-item offline-indicator">
+            OFFLINE
+          </div>
+          <div className="status-item run-online">
+            <button className="run-online-btn" onClick={handleRunOnlineClick}>
+              Run Online
+            </button>
+          </div>
+        </>
       )}
       {(isCRT || isGlitch) && (
         <div className="status-item time">

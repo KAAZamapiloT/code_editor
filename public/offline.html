@@ -129,6 +129,7 @@
     .buttons {
       display: flex;
       justify-content: center;
+      flex-wrap: wrap;
       gap: 10px;
       margin-top: 20px;
     }
@@ -155,10 +156,138 @@
       border-radius: 4px;
       text-align: center;
     }
+    
+    .feature-list {
+      margin: 20px 0;
+    }
+    
+    .feature-item {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+    
+    .feature-icon {
+      margin-right: 10px;
+      font-size: 20px;
+    }
+    
+    .feature-text {
+      flex: 1;
+    }
+    
+    /* Theme styles */
+    .theme-selector {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 15px 0;
+    }
+    
+    .theme-option {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: transform 0.2s;
+    }
+    
+    .theme-option.active {
+      border-color: #fff;
+      transform: scale(1.2);
+    }
+    
+    .theme-option:hover {
+      transform: scale(1.1);
+    }
+    
+    .theme-glitch {
+      background: linear-gradient(to bottom, #00FF41, #008F11);
+    }
+    
+    .theme-dark {
+      background: #252526;
+    }
+    
+    .theme-light {
+      background: #f0f0f0;
+    }
+    
+    /* Dark theme */
+    .offline-container.dark-theme {
+      background-color: #1e1e1e;
+      color: #d4d4d4;
+    }
+    
+    .dark-theme header,
+    .dark-theme footer {
+      background-color: #252526;
+      border-color: #3e3e3e;
+      color: #d4d4d4;
+    }
+    
+    .dark-theme .card {
+      background-color: #252526;
+      border-color: #3e3e3e;
+      box-shadow: 0 0 15px rgba(62, 62, 62, 0.3);
+    }
+    
+    .dark-theme button, 
+    .dark-theme .button {
+      background-color: #333333;
+      color: #d4d4d4;
+      border-color: #3e3e3e;
+    }
+    
+    .dark-theme button:hover, 
+    .dark-theme .button:hover {
+      background-color: #3c3c3c;
+      box-shadow: 0 0 8px rgba(62, 62, 62, 0.5);
+    }
+    
+    /* Light theme */
+    .offline-container.light-theme {
+      background-color: #f5f5f5;
+      color: #333;
+    }
+    
+    .light-theme .crt-overlay,
+    .light-theme .scan,
+    .dark-theme .crt-overlay,
+    .dark-theme .scan {
+      display: none;
+    }
+    
+    .light-theme header,
+    .light-theme footer {
+      background-color: #f0f0f0;
+      border-color: #cccccc;
+      color: #333;
+    }
+    
+    .light-theme .card {
+      background-color: #ffffff;
+      border-color: #cccccc;
+      box-shadow: 0 0 15px rgba(204, 204, 204, 0.3);
+    }
+    
+    .light-theme button, 
+    .light-theme .button {
+      background-color: #ececec;
+      color: #333;
+      border-color: #cccccc;
+    }
+    
+    .light-theme button:hover, 
+    .light-theme .button:hover {
+      background-color: #e0e0e0;
+      box-shadow: 0 0 8px rgba(204, 204, 204, 0.5);
+    }
   </style>
 </head>
 <body>
-  <div class="offline-container">
+  <div class="offline-container" id="app-container">
     <div class="crt-overlay"></div>
     <div class="scan"></div>
     
@@ -173,17 +302,43 @@
         <div class="offline-warning">
           No internet connection detected
         </div>
-        <p>You can still use the editor in offline mode with limited functionality:</p>
-        <ul>
-          <li>Load and edit local text files</li>
-          <li>Save files as downloads</li>
-          <li>Use terminal with basic commands</li>
-          <li>All visual effects and themes</li>
-        </ul>
-        <div class="buttons">
-          <a href="./" class="button">Launch Editor</a>
-          <button onclick="checkConnection()">Check Connection</button>
+        
+        <p>You can still use the editor in offline mode with enhanced functionality:</p>
+        
+        <div class="feature-list">
+          <div class="feature-item">
+            <span class="feature-icon">📁</span>
+            <span class="feature-text"><strong>File Explorer</strong> - Browse and open file trees</span>
+          </div>
+          <div class="feature-item">
+            <span class="feature-icon">🖥️</span>
+            <span class="feature-text"><strong>Code Execution</strong> - Run JavaScript and HTML files</span>
+          </div>
+          <div class="feature-item">
+            <span class="feature-icon">🎨</span>
+            <span class="feature-text"><strong>Multiple Themes</strong> - Glitch CRT, Dark, and Light</span>
+          </div>
+          <div class="feature-item">
+            <span class="feature-icon">📝</span>
+            <span class="feature-text"><strong>Console Output</strong> - Debug your code in real-time</span>
+          </div>
         </div>
+        
+        <div class="theme-selector">
+          <div class="theme-option theme-glitch active" data-theme="glitch" title="Glitch CRT Theme"></div>
+          <div class="theme-option theme-dark" data-theme="dark" title="Dark Theme"></div>
+          <div class="theme-option theme-light" data-theme="light" title="Light Theme"></div>
+        </div>
+        
+        <div class="buttons">
+          <a href="./standalone.html" class="button">Launch Editor</a>
+          <button onclick="checkConnection()">Check Connection</button>
+          <a href="#" onclick="showHelp()" class="button">Quick Help</a>
+        </div>
+        
+        <p style="text-align: center; margin-top: 20px; font-size: 12px;">
+          <strong>TIP:</strong> Use run-offline-editor.bat (Windows) or run-offline-editor.sh (Linux) for quick startup
+        </p>
       </div>
     </main>
     
@@ -191,6 +346,29 @@
       <span>GLITCH.CRT_EDITOR v1.1.0</span>
       <span id="connection-status">OFFLINE</span>
     </footer>
+  </div>
+
+  <!-- Help Modal -->
+  <div id="helpModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1001;">
+    <div style="background: #0D0D0D; border: 1px solid #00FF41; width: 80%; max-width: 600px; margin: 10% auto; padding: 20px; box-shadow: 0 0 20px rgba(0, 255, 65, 0.5);">
+      <div style="display: flex; justify-content: space-between; margin-bottom: 20px; border-bottom: 1px solid rgba(0, 255, 65, 0.3); padding-bottom: 10px;">
+        <h2 style="margin: 0; font-family: 'VT323', monospace;">Keyboard Shortcuts</h2>
+        <span onclick="hideHelp()" style="cursor: pointer; color: #00FF41; font-size: 24px;">&times;</span>
+      </div>
+      <div>
+        <p><strong>Ctrl+N</strong> - New File</p>
+        <p><strong>Ctrl+O</strong> - Open File</p>
+        <p><strong>Ctrl+K</strong> - Open Folder</p>
+        <p><strong>Ctrl+S</strong> - Save File</p>
+        <p><strong>Ctrl+Shift+S</strong> - Save As</p>
+        <p><strong>F5</strong> - Run Current File</p>
+        <p><strong>Ctrl+`</strong> - Toggle Output Console</p>
+        <p><strong>Ctrl+B</strong> - Toggle Sidebar</p>
+      </div>
+      <div style="margin-top: 20px; text-align: right;">
+        <button onclick="hideHelp()">Close</button>
+      </div>
+    </div>
   </div>
   
   <script>
@@ -229,6 +407,68 @@
         statusElement.style.color = '#FF0045';
         alert('Still offline. You can continue using the editor in offline mode.');
       }
+    }
+    
+    // Help modal functions
+    function showHelp() {
+      document.getElementById('helpModal').style.display = 'block';
+    }
+    
+    function hideHelp() {
+      document.getElementById('helpModal').style.display = 'none';
+    }
+    
+    // Theme switching
+    function setTheme(theme) {
+      const container = document.getElementById('app-container');
+      container.className = 'offline-container';
+      
+      if (theme === 'dark') {
+        container.classList.add('dark-theme');
+      } else if (theme === 'light') {
+        container.classList.add('light-theme');
+      }
+      
+      // Update modal styles
+      const helpModal = document.querySelector('#helpModal > div');
+      if (theme === 'dark') {
+        helpModal.style.background = '#252526';
+        helpModal.style.borderColor = '#3e3e3e';
+        helpModal.style.color = '#d4d4d4';
+        helpModal.querySelector('div').style.borderBottomColor = 'rgba(62, 62, 62, 0.3)';
+      } else if (theme === 'light') {
+        helpModal.style.background = '#ffffff';
+        helpModal.style.borderColor = '#cccccc';
+        helpModal.style.color = '#333333';
+        helpModal.querySelector('div').style.borderBottomColor = 'rgba(204, 204, 204, 0.3)';
+      } else {
+        helpModal.style.background = '#0D0D0D';
+        helpModal.style.borderColor = '#00FF41';
+        helpModal.style.color = '#00FF41';
+        helpModal.querySelector('div').style.borderBottomColor = 'rgba(0, 255, 65, 0.3)';
+      }
+      
+      // Update theme option active state
+      document.querySelectorAll('.theme-option').forEach(option => {
+        option.classList.remove('active');
+      });
+      document.querySelector(`.theme-option[data-theme="${theme}"]`).classList.add('active');
+      
+      // Save theme selection
+      localStorage.setItem('editor-theme', theme);
+    }
+    
+    // Add theme switching event listeners
+    document.querySelectorAll('.theme-option').forEach(option => {
+      option.addEventListener('click', () => {
+        setTheme(option.dataset.theme);
+      });
+    });
+    
+    // Load saved theme
+    const savedTheme = localStorage.getItem('editor-theme');
+    if (savedTheme) {
+      setTheme(savedTheme);
     }
     
     // Initial check
